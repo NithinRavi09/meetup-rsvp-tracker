@@ -18,6 +18,7 @@ CREATE TABLE events (
     description TEXT,
     location VARCHAR(255) NOT NULL,
     event_date DATETIME NOT NULL,
+    event_end_date DATETIME NOT NULL,
     created_by INT UNSIGNED NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

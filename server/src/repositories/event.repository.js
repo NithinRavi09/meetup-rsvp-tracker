@@ -6,6 +6,7 @@ async function createEvent({
     description,
     location,
     eventDate,
+    eventEndDate,
     createdBy
 }) {
     // Execute parameterized SQL query to insert new event record
@@ -17,15 +18,17 @@ async function createEvent({
             description,
             location,
             event_date,
+            event_end_date,
             created_by
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?)
         `,
         [
             title,
             description || null,
             location,
             eventDate,
+            eventEndDate,
             createdBy
         ]
     );
@@ -43,6 +46,7 @@ async function findEventById(eventId) {
             e.description,
             e.location,
             e.event_date,
+            e.event_end_date,
             e.created_by,
             e.created_at,
             e.updated_at,
@@ -68,6 +72,7 @@ async function findAllEvents() {
             e.description,
             e.location,
             e.event_date,
+            e.event_end_date,
             e.created_by,
             e.created_at,
             e.updated_at,
@@ -85,7 +90,7 @@ async function findAllEvents() {
 // This function updates event details by event ID using parameterized queries.
 async function updateEvent(
     eventId,
-    { title, description, location, eventDate }
+    { title, description, location, eventDate, eventEndDate }
 ) {
     const [result] = await pool.execute(
         `
@@ -94,7 +99,8 @@ async function updateEvent(
             title = ?,
             description = ?,
             location = ?,
-            event_date = ?
+            event_date = ?,
+            event_end_date = ?
         WHERE id = ?
         `,
         [
@@ -102,6 +108,7 @@ async function updateEvent(
             description || null,
             location,
             eventDate,
+            eventEndDate,
             eventId
         ]
     );
