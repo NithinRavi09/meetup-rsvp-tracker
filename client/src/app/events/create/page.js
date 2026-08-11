@@ -3,6 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "../../../lib/api";
+import Navbar from "../../../components/layout/Navbar";
+import Footer from "../../../components/layout/Footer";
+import Input from "../../../components/ui/Input";
+import Button from "../../../components/ui/Button";
+import ErrorMessage from "../../../components/ui/ErrorMessage";
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -69,87 +74,140 @@ export default function CreateEventPage() {
   };
 
   return (
-    <main>
-      <h1>Create Meetup</h1>
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
+      <Navbar />
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="title">Title</label>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full">
+        <div className="max-w-2xl mx-auto space-y-6">
+          {/* Header Banner */}
+          <div>
+            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+              Create Meetup
+            </h1>
+            <p className="text-slate-500 text-sm font-medium mt-1">
+              Fill in the details below to organize a new event for the community.
+            </p>
+          </div>
 
-          <input
-            id="title"
-            name="title"
-            type="text"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Enter meetup title"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="description">Description</label>
-
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Describe your meetup"
-            rows={5}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="location">Location</label>
-
-          <input
-            id="location"
-            name="location"
-            type="text"
-            value={formData.location}
-            onChange={handleChange}
-            placeholder="Enter meetup location"
-          />
-        </div>
-
-        <div>
-            <label htmlFor="eventDate">Start Date/Time</label>
-
-            <input
-                id="eventDate"
-                name="eventDate"
-                type="datetime-local"
-                value={formData.eventDate}
+          {/* Form Card */}
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-xl p-8 sm:p-10">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Event Title */}
+              <Input
+                id="title"
+                name="title"
+                type="text"
+                label="Event Title *"
+                value={formData.title}
                 onChange={handleChange}
-            />
-        </div>
+                placeholder="e.g. Weekend Tech Mixer"
+                required
+              />
 
-        <div>
-            <label htmlFor="eventEndDate">End Date/Time</label>
+              {/* Description */}
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-semibold text-slate-700 mb-1.5"
+                >
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder="What is this meetup about?"
+                  rows={4}
+                  className="w-full py-2.5 px-3.5 text-sm rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-colors"
+                />
+              </div>
 
-            <input
-                id="eventEndDate"
-                name="eventEndDate"
-                type="datetime-local"
-                value={formData.eventEndDate}
+              {/* Location with Pin Icon */}
+              <Input
+                id="location"
+                name="location"
+                type="text"
+                label="Location *"
+                value={formData.location}
                 onChange={handleChange}
-            />
+                placeholder="Address or Venue Name"
+                required
+                icon={
+                  <svg
+                    className="w-5 h-5 text-slate-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                }
+              />
+
+              {/* Date & Time Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input
+                  id="eventDate"
+                  name="eventDate"
+                  type="datetime-local"
+                  label="Start Date/Time *"
+                  value={formData.eventDate}
+                  onChange={handleChange}
+                  required
+                />
+
+                <Input
+                  id="eventEndDate"
+                  name="eventEndDate"
+                  type="datetime-local"
+                  label="End Date/Time *"
+                  value={formData.eventEndDate}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <ErrorMessage message={error} />
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end space-x-3 pt-6 border-t border-slate-100">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="md"
+                  onClick={() => router.back()}
+                  disabled={loading}
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  loading={loading}
+                >
+                  Create Meetup
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
+      </main>
 
-        {error && <p>{error}</p>}
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Creating..." : "Create Meetup"}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => router.back()}
-          disabled={loading}
-        >
-          Cancel
-        </button>
-      </form>
-    </main>
+      <Footer />
+    </div>
   );
 }
