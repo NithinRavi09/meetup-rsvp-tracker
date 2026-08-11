@@ -2,6 +2,7 @@ const express = require("express");
 
 const eventController = require("../controllers/event.controller");
 const { authenticateToken } = require("../middleware/auth.middleware");
+const rsvpController = require("../controllers/rsvp.controller");
 
 const router = express.Router();
 
@@ -21,6 +22,15 @@ router.delete(
     "/:id",
     authenticateToken,
     eventController.deleteEvent
+);
+router.post(
+    "/:id/rsvp",
+    authenticateToken,
+    rsvpController.createOrUpdateRsvp
+);
+router.get(
+    "/:id/rsvps",
+    rsvpController.getRsvpsByEventId
 );
 
 module.exports = router;
