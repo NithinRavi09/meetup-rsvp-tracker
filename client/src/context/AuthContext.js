@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import {
   getToken,
   saveToken,
@@ -10,18 +10,13 @@ import {
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const storedToken = getToken();
-
-    if (storedToken) {
-      setToken(storedToken);
+  const [token, setToken] = useState(() => {
+    if (typeof window !== "undefined") {
+      return getToken();
     }
-
-    setLoading(false);
-  }, []);
+    return null;
+  });
+  const [loading, setLoading] = useState(false);
 
   const login = (newToken) => {
     saveToken(newToken);
