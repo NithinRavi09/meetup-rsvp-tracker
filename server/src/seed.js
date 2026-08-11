@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 
 const pool = require("./config/db");
 
+// Initial user seed dataset
 const users = [
     {
         name: "John Doe",
@@ -27,11 +28,14 @@ const users = [
     },
 ];
 
+// This function hashes user passwords and populates the users table with initial seed data.
 async function seedUsers() {
     try {
         for (const user of users) {
+            // Hash password with bcrypt before inserting
             const passwordHash = await bcrypt.hash(user.password, 12);
 
+            // Execute parameterized insert or update query
             await pool.execute(
                 `
                 INSERT INTO users (name, email, password_hash)
@@ -53,6 +57,7 @@ async function seedUsers() {
         console.error("User seeding failed:", error);
         process.exitCode = 1;
     } finally {
+        // Close database pool connections
         await pool.end();
     }
 }

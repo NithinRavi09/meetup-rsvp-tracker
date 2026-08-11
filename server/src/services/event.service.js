@@ -1,6 +1,6 @@
 const eventRepository = require("../repositories/event.repository");
 
-// service create event
+// This function creates a new event record in the database.
 async function createEvent({
     title,
     description,
@@ -19,17 +19,17 @@ async function createEvent({
     return await eventRepository.findEventById(eventId);
 }
 
-// get all service events
+// This function fetches all events.
 async function getAllEvents() {
     return await eventRepository.findAllEvents();
 }
 
-// get service event by Id
+// This function fetches a single event by ID.
 async function getEventById(eventId) {
     return await eventRepository.findEventById(eventId);
 }
 
-// Update service event 
+// This function updates an event after verifying ownership.
 async function updateEvent(
     eventId,
     userId,
@@ -37,12 +37,14 @@ async function updateEvent(
 ) {
     const event = await eventRepository.findEventById(eventId);
 
+    // Return error if event does not exist
     if (!event) {
         return {
             error: "EVENT_NOT_FOUND"
         };
     }
 
+    // Verify if the current user is the owner of the event
     if (event.created_by !== userId) {
         return {
             error: "FORBIDDEN"
@@ -59,16 +61,18 @@ async function updateEvent(
     return await eventRepository.findEventById(eventId);
 }
 
-// Delete event 
+// This function deletes an event after verifying ownership.
 async function deleteEvent(eventId, userId) {
     const event = await eventRepository.findEventById(eventId);
 
+    // Return error if event does not exist
     if (!event) {
         return {
             error: "EVENT_NOT_FOUND"
         };
     }
 
+    // Verify if the current user is the owner of the event
     if (event.created_by !== userId) {
         return {
             error: "FORBIDDEN"

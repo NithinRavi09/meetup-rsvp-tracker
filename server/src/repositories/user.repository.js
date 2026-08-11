@@ -1,5 +1,6 @@
 const pool = require("../config/db");
 
+// This function fetches a user record by email address using parameterized query.
 async function findUserByEmail(email) {
     const [rows] = await pool.execute(
         `

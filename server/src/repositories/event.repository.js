@@ -1,6 +1,6 @@
 const pool = require("../config/db");
 
-// create event
+// This function creates a new event in the database using parameterized queries.
 async function createEvent({
     title,
     description,
@@ -8,6 +8,7 @@ async function createEvent({
     eventDate,
     createdBy
 }) {
+    // Execute parameterized SQL query to insert new event record
     const [result] = await pool.execute(
         `
         INSERT INTO events
@@ -32,7 +33,7 @@ async function createEvent({
     return result.insertId;
 }
 
-// find the event by Id
+// This function fetches a single event by ID along with creator information using parameterized query.
 async function findEventById(eventId) {
     const [rows] = await pool.execute(
         `
@@ -57,7 +58,7 @@ async function findEventById(eventId) {
     return rows[0] || null;
 }
 
-// Find all events
+// This function fetches all events sorted by event date.
 async function findAllEvents() {
     const [rows] = await pool.execute(
         `
@@ -81,7 +82,7 @@ async function findAllEvents() {
     return rows;
 }
 
-// Update event
+// This function updates event details by event ID using parameterized queries.
 async function updateEvent(
     eventId,
     { title, description, location, eventDate }
@@ -108,7 +109,7 @@ async function updateEvent(
     return result.affectedRows;
 }
 
-// Delete event
+// This function deletes an event from the database by ID using parameterized query.
 async function deleteEvent(eventId) {
     const [result] = await pool.execute(
         `

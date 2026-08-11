@@ -1,5 +1,6 @@
 const pool = require("../config/db");
 
+// This function checks if an RSVP record exists for a specific user and event.
 async function findRsvp(userId, eventId) {
     const [rows] = await pool.execute(
         `
@@ -14,6 +15,7 @@ async function findRsvp(userId, eventId) {
     return rows[0] || null;
 }
 
+// This function inserts a new RSVP record for a user and event.
 async function createRsvp(userId, eventId, status) {
     const [result] = await pool.execute(
         `
@@ -27,6 +29,7 @@ async function createRsvp(userId, eventId, status) {
     return result.insertId;
 }
 
+// This function updates the status of an existing RSVP record.
 async function updateRsvp(userId, eventId, status) {
     const [result] = await pool.execute(
         `
@@ -40,6 +43,7 @@ async function updateRsvp(userId, eventId, status) {
     return result.affectedRows;
 }
 
+// This function fetches all RSVPs for an event along with user details.
 async function findRsvpsByEventId(eventId) {
     const [rows] = await pool.execute(
         `
