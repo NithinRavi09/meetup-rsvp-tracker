@@ -1,7 +1,9 @@
 const rsvpService = require("../services/rsvp.service");
 
+// This function creates or updates an RSVP for an event.
 async function createOrUpdateRsvp(req, res) {
     try {
+        // Get the event ID from the request parameters and user ID from auth token
         const eventId = req.params.id;
         const userId = req.user.userId;
         const { status } = req.body;
@@ -12,6 +14,7 @@ async function createOrUpdateRsvp(req, res) {
             "declined"
         ];
 
+        // Return 400 when RSVP status is missing or invalid
         if (!status || !allowedStatuses.includes(status)) {
             return res.status(400).json({
                 success: false,
@@ -25,6 +28,7 @@ async function createOrUpdateRsvp(req, res) {
             status
         );
 
+        // Return 404 when the requested event does not exist
         if (rsvp.error === "EVENT_NOT_FOUND") {
             return res.status(404).json({
                 success: false,
@@ -48,12 +52,15 @@ async function createOrUpdateRsvp(req, res) {
     }
 }
 
+// This function fetches all RSVPs for an event.
 async function getRsvpsByEventId(req, res) {
     try {
+        // Get the event ID from the request parameters
         const eventId = req.params.id;
 
         const result = await rsvpService.getRsvpsByEventId(eventId);
 
+        // Return 404 when the requested event does not exist
         if (result.error === "EVENT_NOT_FOUND") {
             return res.status(404).json({
                 success: false,

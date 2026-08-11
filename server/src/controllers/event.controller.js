@@ -1,6 +1,6 @@
 const eventService = require("../services/event.service");
 
-// Create events
+// This function creates a new event created by the authenticated user.
 async function createEvent(req, res) {
     try {
         const {
@@ -10,6 +10,7 @@ async function createEvent(req, res) {
             eventDate
         } = req.body;
 
+        // Return 400 when required fields are missing
         if (!title || !location || !eventDate) {
             return res.status(400).json({
                 success: false,
@@ -17,6 +18,7 @@ async function createEvent(req, res) {
             });
         }
 
+        // Delegate event creation to eventService passing user ID from authenticated token
         const event = await eventService.createEvent({
             title,
             description,
@@ -25,6 +27,7 @@ async function createEvent(req, res) {
             userId: req.user.userId
         });
 
+        // Return 201 Created with newly created event details
         return res.status(201).json({
             success: true,
             message: "Event created successfully",
@@ -41,7 +44,7 @@ async function createEvent(req, res) {
     }
 }
 
-//Get all events
+// This function fetches all events from the database.
 async function getAllEvents(req, res) {
     try {
         const events = await eventService.getAllEvents();
@@ -61,13 +64,15 @@ async function getAllEvents(req, res) {
     }
 }
 
-// Get event by Id
+// This function fetches a single event using the event ID.
 async function getEventById(req, res) {
     try {
+        // Get the event ID from the request parameters
         const eventId = req.params.id;
 
         const event = await eventService.getEventById(eventId);
 
+        // Return 404 when the requested event does not exist
         if (!event) {
             return res.status(404).json({
                 success: false,
@@ -90,9 +95,10 @@ async function getEventById(req, res) {
     }
 }
 
-// Update event
+// This function updates an existing event.
 async function updateEvent(req, res) {
     try {
+        // Get the event ID from the request parameters
         const eventId = req.params.id;
 
         const {
@@ -102,6 +108,7 @@ async function updateEvent(req, res) {
             eventDate
         } = req.body;
 
+        // Return 400 when required fields are missing
         if (!title || !location || !eventDate) {
             return res.status(400).json({
                 success: false,
@@ -120,6 +127,7 @@ async function updateEvent(req, res) {
             }
         );
 
+        // Return 404 when the requested event does not exist
         if (result.error === "EVENT_NOT_FOUND") {
             return res.status(404).json({
                 success: false,
@@ -127,6 +135,7 @@ async function updateEvent(req, res) {
             });
         }
 
+        // Return 403 when user is not authorized to edit the event
         if (result.error === "FORBIDDEN") {
             return res.status(403).json({
                 success: false,
@@ -150,9 +159,10 @@ async function updateEvent(req, res) {
     }
 }
 
-// Delete event 
+// This function deletes an event.
 async function deleteEvent(req, res) {
     try {
+        // Get the event ID from the request parameters
         const eventId = req.params.id;
 
         const result = await eventService.deleteEvent(
@@ -160,6 +170,7 @@ async function deleteEvent(req, res) {
             req.user.userId
         );
 
+        // Return 404 when the requested event does not exist
         if (result.error === "EVENT_NOT_FOUND") {
             return res.status(404).json({
                 success: false,
@@ -167,6 +178,7 @@ async function deleteEvent(req, res) {
             });
         }
 
+        // Return 403 when user is not authorized to delete the event
         if (result.error === "FORBIDDEN") {
             return res.status(403).json({
                 success: false,
