@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Pencil, Trash2, Calendar, MapPin, User } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Calendar, MapPin, User, CalendarX } from "lucide-react";
 import api from "../../../lib/api";
 import Navbar from "../../../components/layout/Navbar";
 import Footer from "../../../components/layout/Footer";
@@ -14,19 +14,6 @@ import RSVPSection from "../../../components/events/RSVPSection";
 import ErrorMessage from "../../../components/ui/ErrorMessage";
 import Button from "../../../components/ui/Button";
 import useAuth from "../../../hooks/useAuth";
-
-const DEMO_EVENT_DETAILS = {
-  id: "1",
-  title: "Advanced CSS Grid Techniques",
-  description:
-    "Join us for an in-depth dive into Advanced CSS Grid techniques. Whether you're building complex dashboard layouts or simple responsive marketing pages, mastering CSS Grid will significantly streamline your workflow.\n\nWe'll cover subgrids, named template areas, and combining Grid with Flexbox for optimal component-level control. Bring your laptops, as the second half of the session will be an interactive workshop where we refactor a legacy layout together.",
-  event_date: "2024-10-24T18:30:00",
-  event_end_date: "2024-10-24T20:30:00",
-  location: "Downtown Tech Hub\n123 Innovation Way, Suite 400",
-  creator_name: "Sarah Jenkins",
-  organizer_avatar:
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
-};
 
 export default function EventDetailsPage() {
   const params = useParams();
@@ -58,12 +45,17 @@ export default function EventDetailsPage() {
           if (response.data?.data) {
             setEvent(response.data.data);
           } else {
-            setEvent(DEMO_EVENT_DETAILS);
+            setEvent(null);
+            setError("Event not found");
           }
         })
         .catch((err) => {
           console.error("Failed to fetch event:", err);
-          setEvent(DEMO_EVENT_DETAILS);
+          setError(
+            err.response?.data?.message ||
+              "The requested meetup could not be found."
+          );
+          setEvent(null);
         })
         .finally(() => {
           setLoading(false);
@@ -74,10 +66,13 @@ export default function EventDetailsPage() {
         .then((response) => {
           if (response.data?.data) {
             setAttendees(response.data.data);
+          } else {
+            setAttendees([]);
           }
         })
         .catch((err) => {
           console.error("Failed to fetch attendees:", err);
+          setAttendees([]);
         })
         .finally(() => {
           setAttendeesLoading(false);
@@ -134,31 +129,44 @@ export default function EventDetailsPage() {
     }
   };
 
-  const currentEvent = event || DEMO_EVENT_DETAILS;
+  const currentEvent = event;
 
   // Split description into paragraphs for presentation
-  const paragraphs = (currentEvent.description || "")
+  const paragraphs = (currentEvent?.description || "")
     .split("\n\n")
     .filter(Boolean);
 
-  const startDate = new Date(currentEvent.event_date);
-  const endDate = new Date(currentEvent.event_end_date);
+  const startDate = currentEvent?.event_date || currentEvent?.eventDate
+    ? new Date(currentEvent.event_date || currentEvent.eventDate)
+    : null;
+  const endDate = currentEvent?.event_end_date || currentEvent?.eventEndDate
+    ? new Date(currentEvent.event_end_date || currentEvent.eventEndDate)
+    : null;
 
-  const formattedDate = startDate.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const isValidStartDate = startDate && !isNaN(startDate.getTime());
+  const isValidEndDate = endDate && !isNaN(endDate.getTime());
 
-  const formattedStartTime = startDate.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const formattedDate = isValidStartDate
+    ? startDate.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "Date unavailable";
 
-  const formattedEndTime = endDate.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const formattedStartTime = isValidStartDate
+    ? startDate.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    : "";
+
+  const formattedEndTime = isValidEndDate
+    ? endDate.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    : "";
 
   const { user } = useAuth();
 
@@ -176,13 +184,19 @@ export default function EventDetailsPage() {
       previousAttendees.map((attendee) =>
         attendee.user_id === user?.id
           ? {
-            ...attendee,
-            status: newStatus,
+              ...attendee,
+              status: newStatus,
             }
           : attendee
       )
     );
   };
+
+  const organizerName =
+    currentEvent?.creator_name ||
+    currentEvent?.organizer_name ||
+    currentEvent?.organizer ||
+    currentEvent?.created_by_name;
 
   return (
     <ProtectedRoute>
@@ -201,10 +215,30 @@ export default function EventDetailsPage() {
             </Link>
           </div>
 
-          {error && <ErrorMessage message={error} />}
-
           {loading ? (
             <div className="bg-white border border-slate-200 rounded-xl p-8 h-96 animate-pulse" />
+          ) : !currentEvent ? (
+            <div className="bg-white border border-slate-200 rounded-xl p-8 sm:p-12 text-center max-w-lg mx-auto my-8 sm:my-12 shadow-2xs space-y-4">
+              <div className="p-3 rounded-full bg-slate-100 text-slate-400 w-12 h-12 mx-auto flex items-center justify-center">
+                <CalendarX className="w-6 h-6 text-slate-400" />
+              </div>
+              <h2 className="text-xl font-bold text-slate-900">
+                Event Not Found
+              </h2>
+              <p className="text-sm text-slate-500 max-w-md mx-auto">
+                {error ||
+                  "The meetup you are looking for does not exist or has been removed."}
+              </p>
+              <div className="pt-2">
+                <Link
+                  href="/events"
+                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2.5 rounded-lg shadow-sm transition-colors cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Events
+                </Link>
+              </div>
+            </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
               {/* Main Event Card */}
@@ -217,23 +251,23 @@ export default function EventDetailsPage() {
 
                   {isOwner && (
                     <div className="flex items-center space-x-3 shrink-0">
-                    <button
-                      onClick={handleEdit}
-                      className="inline-flex items-center gap-1.5 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-                    >
-                      <Pencil className="w-4 h-4" />
-                      Edit Event
-                    </button>
+                      <button
+                        onClick={handleEdit}
+                        className="inline-flex items-center gap-1.5 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                      >
+                        <Pencil className="w-4 h-4" />
+                        Edit Event
+                      </button>
 
-                    <button
-                      type="button"
-                      onClick={handleOpenDeleteModal}
-                      className="inline-flex items-center gap-1.5 border border-red-200 text-red-600 hover:bg-red-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Delete
-                    </button>
-                  </div>
+                      <button
+                        type="button"
+                        onClick={handleOpenDeleteModal}
+                        className="inline-flex items-center gap-1.5 border border-red-200 text-red-600 hover:bg-red-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete
+                      </button>
+                    </div>
                   )}
                 </div>
 
@@ -251,35 +285,44 @@ export default function EventDetailsPage() {
                       <p className="text-sm font-bold text-slate-800 mt-0.5">
                         {formattedDate}
                       </p>
-                      <p className="text-xs text-slate-500 font-medium">
-                        {formattedStartTime} - {formattedEndTime}
-                      </p>
+                      {formattedStartTime && (
+                        <p className="text-xs text-slate-500 font-medium">
+                          {formattedStartTime}
+                          {formattedEndTime ? ` - ${formattedEndTime}` : ""}
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   {/* Location */}
                   <div className="flex items-start space-x-3">
-                  <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
-                    <MapPin className="w-5 h-5 text-slate-500" />
-                  </div>
+                    <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
+                      <MapPin className="w-5 h-5 text-slate-500" />
+                    </div>
 
                     <div>
                       <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
-                      Location
-                    </span>
+                        Location
+                      </span>
 
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        currentEvent.location
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline mt-0.5 inline-block"
-                    >
-                      {currentEvent.location}
-                    </a>
+                      {currentEvent.location ? (
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                            currentEvent.location
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline mt-0.5 inline-block"
+                        >
+                          {currentEvent.location}
+                        </a>
+                      ) : (
+                        <p className="text-sm font-bold text-slate-800 mt-0.5">
+                          Location unavailable
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
 
                   {/* Organized by */}
                   <div className="flex items-start space-x-3">
@@ -300,7 +343,7 @@ export default function EventDetailsPage() {
                           className="w-6 h-6 rounded-full object-cover border border-slate-200"
                         />
                         <span className="text-sm font-bold text-slate-800">
-                          {currentEvent.creator_name || "Sarah Jenkins"}
+                          {organizerName || "Organizer information unavailable"}
                         </span>
                       </div>
                     </div>
@@ -315,9 +358,15 @@ export default function EventDetailsPage() {
                     About this event
                   </h2>
                   <div className="text-slate-600 text-sm sm:text-base leading-relaxed space-y-4">
-                    {paragraphs.map((paragraph, index) => (
-                      <p key={index}>{paragraph}</p>
-                    ))}
+                    {paragraphs.length > 0 ? (
+                      paragraphs.map((paragraph, index) => (
+                        <p key={index}>{paragraph}</p>
+                      ))
+                    ) : (
+                      <p className="text-slate-400 italic">
+                        No description provided for this event.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -325,7 +374,7 @@ export default function EventDetailsPage() {
               {/* Sidebar Column */}
               <div className="space-y-6">
                 <RSVPSection
-                  eventId={eventId} 
+                  eventId={eventId}
                   currentRsvp={currentUserRsvp?.status || ""}
                   onRsvpUpdated={handleRsvpUpdated}
                 />

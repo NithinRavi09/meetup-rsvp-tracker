@@ -1,16 +1,9 @@
 "use client";
 
-const DEMO_ATTENDEES = [
-  { id: 1, name: "Sarah Jenkins", initials: "SJ", color: "bg-blue-600", status: "GOING" },
-  { id: 2, name: "Michael Ross", initials: "MR", color: "bg-slate-400", status: "GOING" },
-  { id: 3, name: "Alex Lee", initials: "AL", color: "bg-amber-700", status: "MAYBE" },
-];
+import { Users } from "lucide-react";
 
-export default function AttendeeList({ attendees = [] }) {
-  const displayList =
-    Array.isArray(attendees) && attendees.length > 0
-      ? attendees
-      : DEMO_ATTENDEES;
+export default function AttendeeList({ attendees = [], loading = false }) {
+  const displayList = Array.isArray(attendees) ? attendees : [];
 
   const getInitials = (name) => {
     if (!name) return "U";
@@ -45,9 +38,27 @@ export default function AttendeeList({ attendees = [] }) {
   };
 
   const getAvatarBg = (index) => {
-    const colors = ["bg-blue-600", "bg-slate-400", "bg-amber-700", "bg-emerald-600", "bg-indigo-600"];
+    const colors = [
+      "bg-blue-600",
+      "bg-slate-400",
+      "bg-amber-700",
+      "bg-emerald-600",
+      "bg-indigo-600",
+    ];
     return colors[index % colors.length];
   };
+
+  if (loading) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-2xs space-y-4 animate-pulse">
+        <div className="h-6 bg-slate-200 rounded w-1/3"></div>
+        <div className="space-y-3">
+          <div className="h-10 bg-slate-100 rounded w-full"></div>
+          <div className="h-10 bg-slate-100 rounded w-full"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-2xs space-y-4">
@@ -55,29 +66,50 @@ export default function AttendeeList({ attendees = [] }) {
         Attendees ({displayList.length})
       </h2>
 
-      <div className="divide-y divide-slate-100">
-        {displayList.map((attendee, index) => (
-          <div
-            key={attendee.id || index}
-            className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
-          >
-            <div className="flex items-center space-x-3">
-              <div
-                className={`w-9 h-9 rounded-full ${
-                  attendee.color || getAvatarBg(index)
-                } text-white font-bold text-xs flex items-center justify-center shadow-2xs`}
-              >
-                {attendee.initials || getInitials(attendee.name)}
-              </div>
-              <span className="text-sm font-semibold text-slate-800">
-                {attendee.name || attendee.email}
-              </span>
-            </div>
+      {displayList.length === 0 ? (
+        <div className="py-6 text-center space-y-2">
+          <Users className="w-8 h-8 text-slate-300 mx-auto" />
+          <p className="text-sm font-semibold text-slate-700">
+            No attendees yet
+          </p>
+          <p className="text-xs text-slate-500">
+            Be the first to RSVP for this meetup.
+          </p>
+        </div>
+      ) : (
+        <div className="divide-y divide-slate-100">
+          {displayList.map((attendee, index) => {
+            const displayName =
+              attendee.name ||
+              attendee.user_name ||
+              attendee.username ||
+              attendee.email ||
+              "Anonymous";
 
-            {getStatusBadge(attendee.status)}
-          </div>
-        ))}
-      </div>
+            return (
+              <div
+                key={attendee.id || attendee.user_id || index}
+                className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+              >
+                <div className="flex items-center space-x-3">
+                  <div
+                    className={`w-9 h-9 rounded-full ${
+                      attendee.color || getAvatarBg(index)
+                    } text-white font-bold text-xs flex items-center justify-center shadow-2xs`}
+                  >
+                    {attendee.initials || getInitials(displayName)}
+                  </div>
+                  <span className="text-sm font-semibold text-slate-800">
+                    {displayName}
+                  </span>
+                </div>
+
+                {getStatusBadge(attendee.status)}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

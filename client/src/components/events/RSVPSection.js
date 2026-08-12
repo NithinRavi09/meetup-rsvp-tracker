@@ -1,18 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Check, HelpCircle, X } from "lucide-react";
 import api from "../../lib/api";
 
 export default function RSVPSection({ eventId, currentRsvp = "", onRsvpUpdated }) {
   const [status, setStatus] = useState(currentRsvp);
+  const [prevRsvp, setPrevRsvp] = useState(currentRsvp);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  if (prevRsvp !== currentRsvp) {
+    setPrevRsvp(currentRsvp);
     setStatus(currentRsvp || "");
-  }, [currentRsvp]);
+  }
+
 
   const handleRSVP = async (selectedStatus) => {
     try {

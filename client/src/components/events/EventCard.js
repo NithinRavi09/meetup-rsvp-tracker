@@ -67,8 +67,7 @@ export default function EventCard({ event }) {
     event.organizer_name ||
     event.creator_name ||
     event.organizer ||
-    event.created_by_name ||
-    "Sarah Jenkins";
+    event.created_by_name;
 
   return (
     <article className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between h-full">
@@ -96,13 +95,19 @@ export default function EventCard({ event }) {
           {/* Location */}
           <div className="flex items-center gap-2 min-w-0">
             <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-            <span className="truncate">{event.location}</span>
+            <span className="truncate">
+              {event.location || "Location unavailable"}
+            </span>
           </div>
 
           {/* Organizer */}
           <div className="flex items-center gap-2 min-w-0">
             <User className="w-4 h-4 text-slate-400 shrink-0" />
-            <span className="truncate">Organized by {organizerName}</span>
+            <span className="truncate">
+              {organizerName
+                ? `Organized by ${organizerName}`
+                : "Organizer information unavailable"}
+            </span>
           </div>
         </div>
       </div>

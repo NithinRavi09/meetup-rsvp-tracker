@@ -22,13 +22,14 @@ export const AuthProvider = ({ children }) => {
 
   // Read authentication data AFTER the component mounts
   useEffect(() => {
-    const storedToken = getToken();
-    const storedUser = getUser();
+    queueMicrotask(() => {
+      const storedToken = getToken();
+      const storedUser = getUser();
 
-    setToken(storedToken);
-    setUser(storedUser);
-
-    setLoading(false);
+      setToken(storedToken);
+      setUser(storedUser);
+      setLoading(false);
+    });
   }, []);
 
   const login = (newToken, newUser) => {
@@ -68,7 +69,7 @@ export const AuthProvider = ({ children }) => {
       const payloadBase64 = token.split(".")[1];
 
       if (!payloadBase64) {
-        logout();
+        queueMicrotask(logout);
         return;
       }
 
@@ -82,7 +83,7 @@ export const AuthProvider = ({ children }) => {
         const timeUntilExpiry = decoded.exp * 1000 - Date.now();
 
         if (timeUntilExpiry <= 0) {
-          logout();
+          queueMicrotask(logout);
           return;
         }
 
@@ -93,9 +94,10 @@ export const AuthProvider = ({ children }) => {
         return () => clearTimeout(timer);
       }
     } catch {
-      logout();
+      queueMicrotask(logout);
     }
   }, [token]);
+
 
   const isLoggedIn = !!token;
 

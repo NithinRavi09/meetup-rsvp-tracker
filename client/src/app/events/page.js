@@ -11,39 +11,6 @@ import Footer from "../../components/layout/Footer";
 import EventList from "../../components/events/EventList";
 import ErrorMessage from "../../components/ui/ErrorMessage";
 
-const DEMO_EVENTS = [
-  {
-    id: 1,
-    title: "Frontend Developers Monthly Mixer",
-    description:
-      "Join local frontend developers for our monthly networking event. We'll be discussing the latest in React, Vue, and CSS architecture over coffee and snacks.",
-    event_date: "2024-10-24T18:30:00",
-    event_end_date: "2024-10-24T20:30:00",
-    location: "Downtown Co-work Space, Room B",
-    organizer_name: "Sarah Jenkins",
-  },
-  {
-    id: 2,
-    title: "Weekend Urban Hike & Picnic",
-    description:
-      "Explore the hidden trails of the city park followed by a shared potluck picnic. A great way to get some fresh air and meet new people in the community.",
-    event_date: "2024-10-26T10:00:00",
-    event_end_date: "2024-10-26T13:00:00",
-    location: "Centennial Park, West Entrance",
-    organizer_name: "Mark T.",
-  },
-  {
-    id: 3,
-    title: "Beginner's Pottery Workshop",
-    description:
-      "A hands-on introduction to wheel throwing and hand-building techniques. All materials are provided. Limited spaces available for personalized instruction.",
-    event_date: "2024-11-02T14:00:00",
-    event_end_date: "2024-11-02T17:00:00",
-    location: "Clay & Kiln Studio, 4th Ave",
-    organizer_name: "Elena R.",
-  },
-];
-
 export default function EventsPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
@@ -68,15 +35,18 @@ export default function EventsPage() {
         const response = await api.get("/events");
         const fetchedEvents = response.data?.data;
 
-        if (Array.isArray(fetchedEvents) && fetchedEvents.length > 0) {
+        if (Array.isArray(fetchedEvents)) {
           setEvents(fetchedEvents);
         } else {
-          setEvents(DEMO_EVENTS);
+          setEvents([]);
         }
       } catch (error) {
         console.error("Failed to fetch events:", error);
-        // Fallback to demo events if server fails or is empty during preview
-        setEvents(DEMO_EVENTS);
+        setError(
+          error.response?.data?.message ||
+            "Failed to load meetups. Please try again."
+        );
+        setEvents([]);
       } finally {
         setLoading(false);
       }
