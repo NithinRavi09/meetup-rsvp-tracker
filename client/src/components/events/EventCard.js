@@ -1,20 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Calendar, MapPin, User } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 
 export default function EventCard({ event }) {
-  const router = useRouter();
   const { isLoggedIn } = useAuth();
-
-  const handleViewDetails = () => {
-    if (!isLoggedIn) {
-      router.push("/login");
-      return;
-    }
-    router.push(`/events/${event.id}`);
-  };
+  const targetHref = isLoggedIn ? `/events/${event.id}` : "/login";
 
   // Helper to format date cleanly
   const formatDate = (dateString, endDateString) => {
@@ -101,12 +93,12 @@ export default function EventCard({ event }) {
       <div>
         <div className="border-t border-slate-100 my-4 sm:my-5" />
 
-        <button
-          onClick={handleViewDetails}
-          className="w-full py-2.5 px-4 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm rounded-lg text-center transition-colors cursor-pointer"
+        <Link
+          href={targetHref}
+          className="block w-full py-2.5 px-4 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm rounded-lg text-center transition-colors cursor-pointer"
         >
           Details
-        </button>
+        </Link>
       </div>
     </article>
   );

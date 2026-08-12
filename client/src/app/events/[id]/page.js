@@ -39,43 +39,48 @@ export default function EventDetailsPage() {
   const [attendeesLoading, setAttendeesLoading] = useState(true);
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        setLoading(true);
-        setError("");
+    const fetchEventAndAttendees = async () => {
+      if (!eventId) return;
 
-        const response = await api.get(`/events/${eventId}`);
-        if (response.data?.data) {
-          setEvent(response.data.data);
-        } else {
+      setLoading(true);
+      setAttendeesLoading(true);
+      setError("");
+
+      const eventPromise = api
+        .get(`/events/${eventId}`)
+        .then((response) => {
+          if (response.data?.data) {
+            setEvent(response.data.data);
+          } else {
+            setEvent(DEMO_EVENT_DETAILS);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch event:", err);
           setEvent(DEMO_EVENT_DETAILS);
-        }
-      } catch (err) {
-        console.error("Failed to fetch event:", err);
-        setEvent(DEMO_EVENT_DETAILS);
-      } finally {
-        setLoading(false);
-      }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+
+      const attendeesPromise = api
+        .get(`/events/${eventId}/rsvps`)
+        .then((response) => {
+          if (response.data?.data) {
+            setAttendees(response.data.data);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch attendees:", err);
+        })
+        .finally(() => {
+          setAttendeesLoading(false);
+        });
+
+      await Promise.all([eventPromise, attendeesPromise]);
     };
 
-    const fetchAttendees = async () => {
-      try {
-        setAttendeesLoading(true);
-        const response = await api.get(`/events/${eventId}/rsvps`);
-        if (response.data?.data) {
-          setAttendees(response.data.data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch attendees:", err);
-      } finally {
-        setAttendeesLoading(false);
-      }
-    };
-
-    if (eventId) {
-      fetchEvent();
-      fetchAttendees();
-    }
+    fetchEventAndAttendees();
   }, [eventId]);
 
   const handleEdit = () => {
