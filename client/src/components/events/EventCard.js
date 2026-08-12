@@ -10,37 +10,54 @@ export default function EventCard({ event }) {
 
   // Helper to format date cleanly
   const formatDate = (dateString, endDateString) => {
-    if (!dateString) return "Oct 24, 2024 • 6:30 PM - 8:30 PM";
-
+    if (!dateString) return "Date not available";
+    
     try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return dateString;
-
-      const formattedDate = date.toLocaleDateString("en-US", {
+      const startDate = new Date(dateString);
+    
+      if (isNaN(startDate.getTime())) {
+        return dateString;
+      }
+    
+      const endDate = endDateString
+        ? new Date(endDateString)
+        : null;
+    
+      const formattedStartDate = startDate.toLocaleDateString("en-US", {
         month: "short",
-        day: "2-digit",
+        day: "numeric",
         year: "numeric",
       });
-
-      const formattedTime = date.toLocaleTimeString("en-US", {
+    
+      const formattedStartTime = startDate.toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
         hour12: true,
       });
-
-      if (endDateString) {
-        const endDate = new Date(endDateString);
-        if (!isNaN(endDate.getTime())) {
-          const endTime = endDate.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true,
-          });
-          return `${formattedDate} • ${formattedTime} - ${endTime}`;
+    
+      if (endDate && !isNaN(endDate.getTime())) {
+        const formattedEndDate = endDate.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      
+        const formattedEndTime = endDate.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        });
+      
+        // Same day
+        if (formattedStartDate === formattedEndDate) {
+          return `${formattedStartDate} • ${formattedStartTime} - ${formattedEndTime}`;
         }
+      
+        // Different days
+        return `${formattedStartDate} ${formattedStartTime} - ${formattedEndDate} ${formattedEndTime}`;
       }
-
-      return `${formattedDate} • ${formattedTime}`;
+    
+      return `${formattedStartDate} • ${formattedStartTime}`;
     } catch {
       return dateString;
     }

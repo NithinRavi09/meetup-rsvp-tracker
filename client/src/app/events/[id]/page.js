@@ -140,6 +140,25 @@ export default function EventDetailsPage() {
     .split("\n\n")
     .filter(Boolean);
 
+  const startDate = new Date(currentEvent.event_date);
+  const endDate = new Date(currentEvent.event_end_date);
+
+  const formattedDate = startDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const formattedStartTime = startDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  const formattedEndTime = endDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
@@ -203,31 +222,37 @@ export default function EventDetailsPage() {
                         Date & Time
                       </span>
                       <p className="text-sm font-bold text-slate-800 mt-0.5">
-                        October 24, 2024
+                        {formattedDate}
                       </p>
                       <p className="text-xs text-slate-500 font-medium">
-                        6:30 PM - 8:30 PM
+                        {formattedStartTime} - {formattedEndTime}
                       </p>
                     </div>
                   </div>
 
                   {/* Location */}
                   <div className="flex items-start space-x-3">
-                    <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
-                      <MapPin className="w-5 h-5 text-slate-500" />
-                    </div>
+                  <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
+                    <MapPin className="w-5 h-5 text-slate-500" />
+                  </div>
+
                     <div>
                       <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
-                        Location
-                      </span>
-                      <p className="text-sm font-bold text-slate-800 mt-0.5">
-                        Downtown Tech Hub
-                      </p>
-                      <p className="text-xs text-slate-500 font-medium">
-                        123 Innovation Way, Suite 400
-                      </p>
-                    </div>
+                      Location
+                    </span>
+
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        currentEvent.location
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline mt-0.5 inline-block"
+                    >
+                      {currentEvent.location}
+                    </a>
                   </div>
+                </div>
 
                   {/* Organized by */}
                   <div className="flex items-start space-x-3">
