@@ -176,21 +176,47 @@ export default function EventDetailsPage() {
     Number(user.id) === Number(currentEvent.created_by);
 
   const currentUserRsvp = attendees.find(
-    (attendee) => Number(attendee.user_id) === Number(user?.id)
+    (attendee) =>
+      Number(attendee.user_id) === Number(user?.id) ||
+      Number(attendee.id) === Number(user?.id)
   );
 
   const handleRsvpUpdated = (newStatus) => {
-    setAttendees((previousAttendees) =>
-      previousAttendees.map((attendee) =>
-        attendee.user_id === user?.id
-          ? {
-              ...attendee,
-              status: newStatus,
-            }
-          : attendee
-      )
-    );
+    if (!user?.id) return;
+
+    setAttendees((previousAttendees) => {
+      const list = Array.isArray(previousAttendees) ? previousAttendees : [];
+      const existingIndex = list.findIndex(
+        (attendee) =>
+          Number(attendee.user_id) === Number(user.id) ||
+          Number(attendee.id) === Number(user.id)
+      );
+
+      if (existingIndex !== -1) {
+        return list.map((attendee, index) =>
+          index === existingIndex
+            ? { ...attendee, status: newStatus }
+            : attendee
+        );
+      } else {
+        const newAttendee = {
+          id: user.id,
+          user_id: user.id,
+          name:
+            user.name ||
+            user.username ||
+            user.user_name ||
+            user.full_name ||
+            user.email ||
+            "You",
+          email: user.email,
+          status: newStatus,
+        };
+        return [...list, newAttendee];
+      }
+    });
   };
+
 
   const organizerName =
     currentEvent?.creator_name ||
