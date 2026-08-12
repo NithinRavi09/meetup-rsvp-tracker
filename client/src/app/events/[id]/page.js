@@ -13,6 +13,7 @@ import AttendeeList from "../../../components/events/AttendeeList";
 import RSVPSection from "../../../components/events/RSVPSection";
 import ErrorMessage from "../../../components/ui/ErrorMessage";
 import Button from "../../../components/ui/Button";
+import useAuth from "../../../hooks/useAuth";
 
 const DEMO_EVENT_DETAILS = {
   id: "1",
@@ -159,6 +160,30 @@ export default function EventDetailsPage() {
     minute: "2-digit",
   });
 
+  const { user } = useAuth();
+
+  const isOwner =
+    user?.id != null &&
+    currentEvent?.created_by != null &&
+    Number(user.id) === Number(currentEvent.created_by);
+
+  const currentUserRsvp = attendees.find(
+    (attendee) => Number(attendee.user_id) === Number(user?.id)
+  );
+
+  const handleRsvpUpdated = (newStatus) => {
+    setAttendees((previousAttendees) =>
+      previousAttendees.map((attendee) =>
+        attendee.user_id === user?.id
+          ? {
+            ...attendee,
+            status: newStatus,
+            }
+          : attendee
+      )
+    );
+  };
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
@@ -190,7 +215,8 @@ export default function EventDetailsPage() {
                     {currentEvent.title}
                   </h1>
 
-                  <div className="flex items-center space-x-3 shrink-0">
+                  {isOwner && (
+                    <div className="flex items-center space-x-3 shrink-0">
                     <button
                       onClick={handleEdit}
                       className="inline-flex items-center gap-1.5 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
@@ -208,6 +234,7 @@ export default function EventDetailsPage() {
                       Delete
                     </button>
                   </div>
+                  )}
                 </div>
 
                 {/* Metadata Details */}
@@ -297,7 +324,11 @@ export default function EventDetailsPage() {
 
               {/* Sidebar Column */}
               <div className="space-y-6">
-                <RSVPSection eventId={eventId} />
+                <RSVPSection
+                  eventId={eventId} 
+                  currentRsvp={currentUserRsvp?.status || ""}
+                  onRsvpUpdated={handleRsvpUpdated}
+                />
 
                 <AttendeeList
                   attendees={attendees}

@@ -1,39 +1,40 @@
 "use client";
 
-import { createContext, useState, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 import {
   getToken,
   saveToken,
   removeToken,
   getUser,
   saveUser,
-  removeUser
+  removeUser,
 } from "../lib/auth";
 
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => {
-    if (typeof window !== "undefined") {
-      return getToken();
-    }
-    return null;
-  });
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
 
-  const [user, setUser] = useState(() => {
-    if (typeof window !== "undefined") {
-     return getUser();
-    }
+  // Important: start with true because we don't know the auth
+  // state until the browser checks localStorage.
+  const [loading, setLoading] = useState(true);
 
-     return null;
-  });
+  // Read authentication data AFTER the component mounts
+  useEffect(() => {
+    const storedToken = getToken();
+    const storedUser = getUser();
 
-  const [loading, setLoading] = useState(false);
+    setToken(storedToken);
+    setUser(storedUser);
+
+    setLoading(false);
+  }, []);
 
   const login = (newToken, newUser) => {
     saveToken(newToken);
     saveUser(newUser);
-    
+
     setToken(newToken);
     setUser(newUser);
   };
@@ -41,49 +42,58 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     removeToken();
     removeUser();
-    
+
     setToken(null);
     setUser(null);
   };
 
+  // Handle unauthorized API responses
   useEffect(() => {
     const handleUnauthorized = () => {
       logout();
     };
 
-    if (typeof window !== "undefined") {
-      window.addEventListener("auth:unauthorized", handleUnauthorized);
-    }
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
 
     return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("auth:unauthorized", handleUnauthorized);
-      }
+      window.removeEventListener("auth:unauthorized", handleUnauthorized);
     };
   }, []);
 
+  // Automatically logout when JWT expires
   useEffect(() => {
     if (!token) return;
 
     try {
       const payloadBase64 = token.split(".")[1];
-      if (payloadBase64) {
-        const base64 = payloadBase64.replace(/-/g, "+").replace(/_/g, "/");
-        const decoded = JSON.parse(atob(base64));
-        if (decoded && decoded.exp) {
-          const timeUntilExpiry = decoded.exp * 1000 - Date.now();
-          const delay = Math.max(0, timeUntilExpiry);
-          const timer = setTimeout(() => {
-            logout();
-          }, delay);
-          return () => clearTimeout(timer);
+
+      if (!payloadBase64) {
+        logout();
+        return;
+      }
+
+      const base64 = payloadBase64
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+
+      const decoded = JSON.parse(atob(base64));
+
+      if (decoded?.exp) {
+        const timeUntilExpiry = decoded.exp * 1000 - Date.now();
+
+        if (timeUntilExpiry <= 0) {
+          logout();
+          return;
         }
+
+        const timer = setTimeout(() => {
+          logout();
+        }, timeUntilExpiry);
+
+        return () => clearTimeout(timer);
       }
     } catch {
-      const timer = setTimeout(() => {
-        logout();
-      }, 0);
-      return () => clearTimeout(timer);
+      logout();
     }
   }, [token]);
 

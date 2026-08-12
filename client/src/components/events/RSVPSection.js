@@ -1,14 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, HelpCircle, X } from "lucide-react";
 import api from "../../lib/api";
 
-export default function RSVPSection({ eventId }) {
-  const [status, setStatus] = useState("");
+export default function RSVPSection({ eventId, currentRsvp = "", onRsvpUpdated }) {
+  const [status, setStatus] = useState(currentRsvp);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setStatus(currentRsvp || "");
+  }, [currentRsvp]);
 
   const handleRSVP = async (selectedStatus) => {
     try {
@@ -21,12 +25,11 @@ export default function RSVPSection({ eventId }) {
       });
 
       setStatus(selectedStatus);
+      onRsvpUpdated?.(selectedStatus);
       setMessage("Your RSVP has been updated.");
     } catch (error) {
       console.error("Failed to RSVP:", error);
 
-      // Even if server call is mocked or fails during development, update local state
-      setStatus(selectedStatus);
       setError(
         error.response?.data?.message ||
           "Failed to update RSVP. Please try again."

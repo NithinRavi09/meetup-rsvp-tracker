@@ -77,7 +77,7 @@ export default function EventCard({ event }) {
           {event.title}
         </h2>
 
-        <p className="text-slate-600 text-xs sm:text-sm mt-2.5 leading-relaxed line-clamp-3 min-h-[4.5rem]">
+        <p className="text-slate-600 text-xs sm:text-sm mt-2.5 leading-relaxed line-clamp-3 min-h-18">
           {event.description}
         </p>
 
