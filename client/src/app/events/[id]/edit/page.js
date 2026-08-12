@@ -6,6 +6,7 @@ import Link from "next/link";
 import api from "../../../../lib/api";
 import Navbar from "../../../../components/layout/Navbar";
 import Footer from "../../../../components/layout/Footer";
+import ProtectedRoute from "../../../../components/auth/ProtectedRoute";
 import Input from "../../../../components/ui/Input";
 import Button from "../../../../components/ui/Button";
 import ErrorMessage from "../../../../components/ui/ErrorMessage";
@@ -117,7 +118,8 @@ export default function EditEventPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full">
@@ -292,6 +294,7 @@ export default function EditEventPage() {
 
       <Footer />
     </div>
+    </ProtectedRoute>
   );
 }
 

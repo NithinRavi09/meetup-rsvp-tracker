@@ -1,11 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import useAuth from "../../hooks/useAuth";
 
 export default function EventCard({ event }) {
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
 
   const handleViewDetails = () => {
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
     router.push(`/events/${event.id}`);
   };
 

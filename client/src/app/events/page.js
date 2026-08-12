@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import api from "../../lib/api";
+import useAuth from "../../hooks/useAuth";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 import EventList from "../../components/events/EventList";
@@ -42,10 +44,19 @@ const DEMO_EVENTS = [
 ];
 
 export default function EventsPage() {
+  const router = useRouter();
+  const { isLoggedIn } = useAuth();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activePage, setActivePage] = useState(1);
+
+  const handleCreateClick = (e) => {
+    if (!isLoggedIn) {
+      e.preventDefault();
+      router.push("/login");
+    }
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -91,6 +102,7 @@ export default function EventsPage() {
 
           <Link
             href="/events/create"
+            onClick={handleCreateClick}
             className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2.5 rounded-lg shadow-sm transition-colors self-start sm:self-auto"
           >
             <svg

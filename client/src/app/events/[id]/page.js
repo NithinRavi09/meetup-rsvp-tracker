@@ -7,6 +7,7 @@ import Image from "next/image";
 import api from "../../../lib/api";
 import Navbar from "../../../components/layout/Navbar";
 import Footer from "../../../components/layout/Footer";
+import ProtectedRoute from "../../../components/auth/ProtectedRoute";
 import AttendeeList from "../../../components/events/AttendeeList";
 import RSVPSection from "../../../components/events/RSVPSection";
 import ErrorMessage from "../../../components/ui/ErrorMessage";
@@ -88,7 +89,8 @@ export default function EventDetailsPage() {
     .filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-6">
@@ -311,5 +313,6 @@ export default function EventDetailsPage() {
 
       <Footer />
     </div>
+    </ProtectedRoute>
   );
 }

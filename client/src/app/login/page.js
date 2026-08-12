@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import api from "../../lib/api";
 import useAuth from "../../hooks/useAuth";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import ErrorMessage from "../../components/ui/ErrorMessage";
+import Loading from "../../components/ui/Loading";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { isLoggedIn, loading: authLoading, login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -19,6 +20,16 @@ export default function LoginPage() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && isLoggedIn) {
+      router.replace("/events");
+    }
+  }, [isLoggedIn, authLoading, router]);
+
+  if (authLoading || isLoggedIn) {
+    return <Loading message="Redirecting to events..." />;
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
