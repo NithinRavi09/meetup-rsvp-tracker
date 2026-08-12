@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import api from "../../lib/api";
 import useAuth from "../../hooks/useAuth";
 import Navbar from "../../components/layout/Navbar";
@@ -88,14 +89,14 @@ export default function EventsPage() {
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex-1 w-full space-y-6 sm:space-y-8">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               Upcoming Events
             </h1>
-            <p className="text-slate-500 text-sm font-medium mt-1">
+            <p className="text-slate-500 text-xs sm:text-sm font-medium mt-1">
               Discover and join local gatherings in your area.
             </p>
           </div>
@@ -103,21 +104,9 @@ export default function EventsPage() {
           <Link
             href="/events/create"
             onClick={handleCreateClick}
-            className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2.5 rounded-lg shadow-sm transition-colors self-start sm:self-auto"
+            className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2.5 rounded-lg shadow-sm transition-colors self-start sm:self-auto cursor-pointer"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2.5"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
+            <Plus className="w-4 h-4" />
             Create Meetup
           </Link>
         </div>
@@ -150,9 +139,10 @@ export default function EventsPage() {
           <div className="flex items-center justify-center space-x-2 pt-6">
             <button
               onClick={() => setActivePage((prev) => Math.max(prev - 1, 1))}
+              aria-label="Previous Page"
               className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 text-sm font-medium transition-colors cursor-pointer"
             >
-              &lt;
+              <ChevronLeft className="w-4 h-4" />
             </button>
             {[1, 2, 3].map((page) => (
               <button
@@ -169,9 +159,10 @@ export default function EventsPage() {
             ))}
             <button
               onClick={() => setActivePage((prev) => Math.min(prev + 1, 3))}
+              aria-label="Next Page"
               className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 text-sm font-medium transition-colors cursor-pointer"
             >
-              &gt;
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         )}

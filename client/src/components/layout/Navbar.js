@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 
 export default function Navbar() {
@@ -19,14 +20,14 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-2xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Left: Brand & Links */}
-        <div className="flex items-center space-x-8">
+        <div className="flex items-center space-x-6 sm:space-x-8">
           <Link
             href="/events"
-            className="text-xl font-extrabold text-blue-600 tracking-tight hover:opacity-90 transition-opacity"
+            className="text-lg sm:text-xl font-extrabold text-blue-600 tracking-tight hover:opacity-90 transition-opacity"
           >
             Local Meetup
           </Link>
-          <nav className="flex items-center space-x-6">
+          <nav className="flex items-center space-x-4 sm:space-x-6">
             <Link
               href="/events"
               className={`text-sm font-semibold transition-colors relative py-5 ${
@@ -41,13 +42,13 @@ export default function Navbar() {
         </div>
 
         {/* Right: Profile & Auth Actions */}
-        <div className="flex items-center space-x-5">
+        <div className="flex items-center space-x-4 sm:space-x-5">
           {isLoggedIn ? (
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
               <div className="flex items-center space-x-2.5">
                 <Image
                   src="/images/user.png"
-                  alt="Alex Johnson"
+                  alt={user?.name || "User Avatar"}
                   width={32}
                   height={32}
                   unoptimized
@@ -62,19 +63,7 @@ export default function Navbar() {
                 className="text-sm font-medium text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 Logout
-                <svg
-                  className="w-4 h-4 text-slate-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  />
-                </svg>
+                <LogOut className="w-4 h-4 text-slate-500" />
               </button>
             </div>
           ) : (

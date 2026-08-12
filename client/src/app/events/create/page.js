@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { MapPin } from "lucide-react";
 import api from "../../../lib/api";
 import Navbar from "../../../components/layout/Navbar";
 import Footer from "../../../components/layout/Footer";
@@ -79,20 +80,20 @@ export default function CreateEventPage() {
       <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
         <Navbar />
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex-1 w-full">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Header Banner */}
             <div>
-              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 Create Meetup
               </h1>
-              <p className="text-slate-500 text-sm font-medium mt-1">
+              <p className="text-slate-500 text-xs sm:text-sm font-medium mt-1">
                 Fill in the details below to organize a new event for the community.
               </p>
             </div>
 
             {/* Form Card */}
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-xl p-8 sm:p-10">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 sm:p-8 md:p-10">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Event Title */}
                 <Input
@@ -135,27 +136,7 @@ export default function CreateEventPage() {
                   onChange={handleChange}
                   placeholder="Address or Venue Name"
                   required
-                  icon={
-                    <svg
-                      className="w-5 h-5 text-slate-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                  }
+                  icon={<MapPin className="w-5 h-5 text-slate-400" />}
                 />
 
                 {/* Date & Time Grid */}

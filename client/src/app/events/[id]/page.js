@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowLeft, Pencil, Trash2, Calendar, MapPin, User } from "lucide-react";
 import api from "../../../lib/api";
 import Navbar from "../../../components/layout/Navbar";
 import Footer from "../../../components/layout/Footer";
@@ -93,26 +94,14 @@ export default function EventDetailsPage() {
       <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full space-y-6">
         {/* Back Link */}
         <div>
           <Link
             href="/events"
             className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
+            <ArrowLeft className="w-4 h-4" />
             Back to Events
           </Link>
         </div>
@@ -122,12 +111,12 @@ export default function EventDetailsPage() {
         {loading ? (
           <div className="bg-white border border-slate-200 rounded-xl p-8 h-96 animate-pulse" />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
             {/* Main Event Card */}
-            <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-6 sm:p-8 shadow-2xs space-y-6">
+            <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 sm:p-8 shadow-2xs space-y-6">
               {/* Header with Title and Action Buttons */}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
                   {currentEvent.title}
                 </h1>
 
@@ -136,19 +125,7 @@ export default function EventDetailsPage() {
                     onClick={handleEdit}
                     className="inline-flex items-center gap-1.5 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
                   >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 210.3H3v-3.572L16.732 3.732z"
-                      />
-                    </svg>
+                    <Pencil className="w-4 h-4" />
                     Edit Event
                   </button>
 
@@ -156,19 +133,7 @@ export default function EventDetailsPage() {
                     type="button"
                     className="inline-flex items-center gap-1.5 border border-red-200 text-red-600 hover:bg-red-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
                   >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
+                    <Trash2 className="w-4 h-4" />
                     Delete
                   </button>
                 </div>
@@ -179,19 +144,7 @@ export default function EventDetailsPage() {
                 {/* Date & Time */}
                 <div className="flex items-start space-x-3">
                   <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
-                    <svg
-                      className="w-5 h-5 text-slate-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
+                    <Calendar className="w-5 h-5 text-slate-500" />
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
@@ -209,25 +162,7 @@ export default function EventDetailsPage() {
                 {/* Location */}
                 <div className="flex items-start space-x-3">
                   <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
-                    <svg
-                      className="w-5 h-5 text-slate-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
+                    <MapPin className="w-5 h-5 text-slate-500" />
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
@@ -245,19 +180,7 @@ export default function EventDetailsPage() {
                 {/* Organized by */}
                 <div className="flex items-start space-x-3">
                   <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
-                    <svg
-                      className="w-5 h-5 text-slate-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
+                    <User className="w-5 h-5 text-slate-500" />
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">

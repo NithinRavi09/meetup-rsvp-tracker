@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Check, HelpCircle, X } from "lucide-react";
 import api from "../../lib/api";
 
 export default function RSVPSection({ eventId }) {
@@ -58,7 +59,7 @@ export default function RSVPSection({ eventId }) {
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-2xs space-y-4">
+    <div className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 shadow-2xs space-y-4">
       <h2 className="text-lg font-bold text-slate-900">Your RSVP</h2>
 
       <div className="space-y-3">
@@ -70,25 +71,13 @@ export default function RSVPSection({ eventId }) {
           className={getButtonClass("going")}
         >
           <div
-            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
               status.toLowerCase() === "going"
                 ? "bg-blue-600 text-white"
                 : "border border-slate-300 text-slate-400"
             }`}
           >
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2.5"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
+            <Check className="w-3.5 h-3.5" />
           </div>
           <span>Going</span>
         </button>
@@ -101,25 +90,13 @@ export default function RSVPSection({ eventId }) {
           className={getButtonClass("maybe")}
         >
           <div
-            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
               status.toLowerCase() === "maybe"
                 ? "bg-amber-500 text-white"
                 : "border border-slate-300 text-slate-400"
             }`}
           >
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2.5"
-                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093V14"
-              />
-            </svg>
+            <HelpCircle className="w-3.5 h-3.5" />
           </div>
           <span>Maybe</span>
         </button>
@@ -132,25 +109,13 @@ export default function RSVPSection({ eventId }) {
           className={getButtonClass("declined")}
         >
           <div
-            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
               status.toLowerCase() === "declined"
                 ? "bg-slate-600 text-white"
                 : "border border-slate-300 text-slate-400"
             }`}
           >
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2.5"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <X className="w-3.5 h-3.5" />
           </div>
           <span>Declined</span>
         </button>

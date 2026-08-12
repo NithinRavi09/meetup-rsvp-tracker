@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import api from "../../lib/api";
 import useAuth from "../../hooks/useAuth";
 import Input from "../../components/ui/Input";
@@ -73,12 +74,12 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 sm:p-6">
-      <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-xl p-8 sm:p-10 space-y-6">
+      <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 space-y-6">
         <div className="text-center">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-600 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-600 tracking-tight">
             Local Meetup
           </h1>
-          <p className="text-slate-500 text-sm font-medium mt-1">
+          <p className="text-slate-500 text-xs sm:text-sm font-medium mt-1">
             Sign in to your account
           </p>
         </div>
@@ -93,21 +94,7 @@ export default function LoginPage() {
             onChange={handleChange}
             placeholder="name@example.com"
             required
-            icon={
-              <svg
-                className="w-5 h-5 text-slate-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-            }
+            icon={<Mail className="w-5 h-5 text-slate-400" />}
           />
 
           <Input
@@ -118,21 +105,7 @@ export default function LoginPage() {
             value={formData.password}
             onChange={handleChange}
             required
-            icon={
-              <svg
-                className="w-5 h-5 text-slate-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-            }
+            icon={<Lock className="w-5 h-5 text-slate-400" />}
           />
 
           <ErrorMessage message={error} />
@@ -143,21 +116,7 @@ export default function LoginPage() {
             size="lg"
             loading={loading}
             className="w-full mt-2"
-            icon={
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </svg>
-            }
+            icon={<ArrowRight className="w-4 h-4" />}
           >
             Sign In
           </Button>

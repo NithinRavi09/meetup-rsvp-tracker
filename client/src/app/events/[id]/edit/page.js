@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft, MapPin } from "lucide-react";
 import api from "../../../../lib/api";
 import Navbar from "../../../../components/layout/Navbar";
 import Footer from "../../../../components/layout/Footer";
@@ -122,35 +123,23 @@ export default function EditEventPage() {
       <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex-1 w-full">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Form Card */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-xl p-8 sm:p-10 space-y-6">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 space-y-6">
             {/* Back link & Card Header */}
             <div>
               <Link
                 href={`/events/${eventId}`}
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors mb-4"
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
+                <ArrowLeft className="w-4 h-4" />
                 Back to Event
               </Link>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 Edit Meetup
               </h1>
-              <p className="text-slate-500 text-sm font-medium mt-1">
+              <p className="text-slate-500 text-xs sm:text-sm font-medium mt-1">
                 Update the details for &quot;{formData.title || "Weekly Coffee & Code"}&quot;.
               </p>
             </div>
@@ -217,27 +206,7 @@ export default function EditEventPage() {
                     value={formData.location}
                     onChange={handleChange}
                     required
-                    icon={
-                      <svg
-                        className="w-5 h-5 text-slate-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                    }
+                    icon={<MapPin className="w-5 h-5 text-slate-400" />}
                   />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
