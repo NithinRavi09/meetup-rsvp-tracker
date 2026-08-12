@@ -5,7 +5,9 @@ import {
   getToken,
   saveToken,
   removeToken,
-  isTokenExpired,
+  getUser,
+  saveUser,
+  removeUser
 } from "../lib/auth";
 
 export const AuthContext = createContext(null);
@@ -17,16 +19,31 @@ export const AuthProvider = ({ children }) => {
     }
     return null;
   });
+
+  const [user, setUser] = useState(() => {
+    if (typeof window !== "undefined") {
+     return getUser();
+    }
+
+     return null;
+  });
+
   const [loading, setLoading] = useState(false);
 
-  const login = (newToken) => {
+  const login = (newToken, newUser) => {
     saveToken(newToken);
+    saveUser(newUser);
+    
     setToken(newToken);
+    setUser(newUser);
   };
 
   const logout = () => {
     removeToken();
+    removeUser();
+    
     setToken(null);
+    setUser(null);
   };
 
   useEffect(() => {
@@ -76,6 +93,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         token,
+        user,
         isLoggedIn,
         loading,
         login,
@@ -85,4 +103,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+};

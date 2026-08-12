@@ -8,7 +8,7 @@ import useAuth from "../../hooks/useAuth";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isLoggedIn, logout } = useAuth();
+  const { user, isLoggedIn, logout } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -46,7 +46,7 @@ export default function Navbar() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2.5">
                 <Image
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80"
+                  src="/images/user.png"
                   alt="Alex Johnson"
                   width={32}
                   height={32}
@@ -54,7 +54,7 @@ export default function Navbar() {
                   className="w-8 h-8 rounded-full object-cover border border-slate-200 shadow-2xs"
                 />
                 <span className="text-sm font-semibold text-slate-800 hidden sm:inline-block">
-                  Alex Johnson
+                  {user?.name}
                 </span>
               </div>
               <button

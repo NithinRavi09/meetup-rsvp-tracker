@@ -1,4 +1,5 @@
 const TOKEN_KEY = "meetup_token";
+const USER_KEY = "meetup_user";
 
 export const isTokenExpired = (token) => {
   if (!token) return true;
@@ -34,4 +35,19 @@ export const removeToken = () => {
 
 export const isAuthenticated = () => {
   return !!getToken();
-};
+};
+
+
+export const saveUser = (user) => {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+};
+
+export const getUser = () => {
+  if (typeof window === "undefined") return null;
+  const userData = localStorage.getItem(USER_KEY);
+  return userData ? JSON.parse(userData) : null;
+};
+
+export const removeUser = () => {
+  localStorage.removeItem(USER_KEY);
+};

@@ -55,9 +55,9 @@ export default function LoginPage() {
 
       const response = await api.post("/auth/login", formData);
 
-      const token = response.data.data.token;
+      const { token, user } = response.data.data;
 
-      login(token);
+      login(token, user);
 
       router.push("/events");
     } catch (error) {

@@ -265,10 +265,7 @@ export default function EventDetailsPage() {
                     </span>
                     <div className="flex items-center space-x-2 mt-1">
                       <Image
-                        src={
-                          currentEvent.organizer_avatar ||
-                          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80"
-                        }
+                        src="/images/user.png"
                         alt="Organizer"
                         width={24}
                         height={24}
