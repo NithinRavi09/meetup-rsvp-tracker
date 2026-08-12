@@ -12,6 +12,7 @@ import ProtectedRoute from "../../../components/auth/ProtectedRoute";
 import AttendeeList from "../../../components/events/AttendeeList";
 import RSVPSection from "../../../components/events/RSVPSection";
 import ErrorMessage from "../../../components/ui/ErrorMessage";
+import Button from "../../../components/ui/Button";
 
 const DEMO_EVENT_DETAILS = {
   id: "1",
@@ -37,6 +38,10 @@ export default function EventDetailsPage() {
 
   const [attendees, setAttendees] = useState([]);
   const [attendeesLoading, setAttendeesLoading] = useState(true);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     const fetchEventAndAttendees = async () => {
@@ -83,8 +88,49 @@ export default function EventDetailsPage() {
     fetchEventAndAttendees();
   }, [eventId]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && isDeleteModalOpen && !isDeleting) {
+        setIsDeleteModalOpen(false);
+        setDeleteError("");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isDeleteModalOpen, isDeleting]);
+
   const handleEdit = () => {
     router.push(`/events/${eventId}/edit`);
+  };
+
+  const handleOpenDeleteModal = () => {
+    setDeleteError("");
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    if (isDeleting) return;
+    setIsDeleteModalOpen(false);
+    setDeleteError("");
+  };
+
+  const handleConfirmDelete = async () => {
+    if (isDeleting || !eventId) return;
+
+    setIsDeleting(true);
+    setDeleteError("");
+
+    try {
+      await api.delete(`/events/${eventId}`);
+      router.push("/events");
+    } catch (err) {
+      console.error("Failed to delete event:", err);
+      const apiMessage = err.response?.data?.message;
+      setDeleteError(
+        apiMessage || "Failed to delete meetup. Please try again."
+      );
+      setIsDeleting(false);
+    }
   };
 
   const currentEvent = event || DEMO_EVENT_DETAILS;
@@ -97,147 +143,205 @@ export default function EventDetailsPage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
-      <Navbar />
+        <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full space-y-6">
-        {/* Back Link */}
-        <div>
-          <Link
-            href="/events"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Events
-          </Link>
-        </div>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full space-y-6">
+          {/* Back Link */}
+          <div>
+            <Link
+              href="/events"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Events
+            </Link>
+          </div>
 
-        {error && <ErrorMessage message={error} />}
+          {error && <ErrorMessage message={error} />}
 
-        {loading ? (
-          <div className="bg-white border border-slate-200 rounded-xl p-8 h-96 animate-pulse" />
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
-            {/* Main Event Card */}
-            <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 sm:p-8 shadow-2xs space-y-6">
-              {/* Header with Title and Action Buttons */}
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                  {currentEvent.title}
-                </h1>
+          {loading ? (
+            <div className="bg-white border border-slate-200 rounded-xl p-8 h-96 animate-pulse" />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+              {/* Main Event Card */}
+              <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 sm:p-8 shadow-2xs space-y-6">
+                {/* Header with Title and Action Buttons */}
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                    {currentEvent.title}
+                  </h1>
 
-                <div className="flex items-center space-x-3 shrink-0">
-                  <button
-                    onClick={handleEdit}
-                    className="inline-flex items-center gap-1.5 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <Pencil className="w-4 h-4" />
-                    Edit Event
-                  </button>
+                  <div className="flex items-center space-x-3 shrink-0">
+                    <button
+                      onClick={handleEdit}
+                      className="inline-flex items-center gap-1.5 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <Pencil className="w-4 h-4" />
+                      Edit Event
+                    </button>
 
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1.5 border border-red-200 text-red-600 hover:bg-red-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete
-                  </button>
-                </div>
-              </div>
-
-              {/* Metadata Details */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-                {/* Date & Time */}
-                <div className="flex items-start space-x-3">
-                  <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
-                    <Calendar className="w-5 h-5 text-slate-500" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
-                      Date & Time
-                    </span>
-                    <p className="text-sm font-bold text-slate-800 mt-0.5">
-                      October 24, 2024
-                    </p>
-                    <p className="text-xs text-slate-500 font-medium">
-                      6:30 PM - 8:30 PM
-                    </p>
+                    <button
+                      type="button"
+                      onClick={handleOpenDeleteModal}
+                      className="inline-flex items-center gap-1.5 border border-red-200 text-red-600 hover:bg-red-50 font-semibold text-sm px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </button>
                   </div>
                 </div>
 
-                {/* Location */}
-                <div className="flex items-start space-x-3">
-                  <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
-                    <MapPin className="w-5 h-5 text-slate-500" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
-                      Location
-                    </span>
-                    <p className="text-sm font-bold text-slate-800 mt-0.5">
-                      Downtown Tech Hub
-                    </p>
-                    <p className="text-xs text-slate-500 font-medium">
-                      123 Innovation Way, Suite 400
-                    </p>
-                  </div>
-                </div>
-
-                {/* Organized by */}
-                <div className="flex items-start space-x-3">
-                  <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
-                    <User className="w-5 h-5 text-slate-500" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
-                      Organized by
-                    </span>
-                    <div className="flex items-center space-x-2 mt-1">
-                      <Image
-                        src="/images/user.png"
-                        alt="Organizer"
-                        width={24}
-                        height={24}
-                        unoptimized
-                        className="w-6 h-6 rounded-full object-cover border border-slate-200"
-                      />
-                      <span className="text-sm font-bold text-slate-800">
-                        {currentEvent.creator_name || "Sarah Jenkins"}
+                {/* Metadata Details */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                  {/* Date & Time */}
+                  <div className="flex items-start space-x-3">
+                    <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
+                      <Calendar className="w-5 h-5 text-slate-500" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                        Date & Time
                       </span>
+                      <p className="text-sm font-bold text-slate-800 mt-0.5">
+                        October 24, 2024
+                      </p>
+                      <p className="text-xs text-slate-500 font-medium">
+                        6:30 PM - 8:30 PM
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Location */}
+                  <div className="flex items-start space-x-3">
+                    <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
+                      <MapPin className="w-5 h-5 text-slate-500" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                        Location
+                      </span>
+                      <p className="text-sm font-bold text-slate-800 mt-0.5">
+                        Downtown Tech Hub
+                      </p>
+                      <p className="text-xs text-slate-500 font-medium">
+                        123 Innovation Way, Suite 400
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Organized by */}
+                  <div className="flex items-start space-x-3">
+                    <div className="p-2 rounded-lg bg-slate-50 text-slate-500 shrink-0">
+                      <User className="w-5 h-5 text-slate-500" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                        Organized by
+                      </span>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Image
+                          src="/images/user.png"
+                          alt="Organizer"
+                          width={24}
+                          height={24}
+                          unoptimized
+                          className="w-6 h-6 rounded-full object-cover border border-slate-200"
+                        />
+                        <span className="text-sm font-bold text-slate-800">
+                          {currentEvent.creator_name || "Sarah Jenkins"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="border-t border-slate-100 my-6" />
+                <div className="border-t border-slate-100 my-6" />
 
-              {/* About this Event */}
-              <div className="space-y-3">
-                <h2 className="text-lg font-bold text-slate-900">
-                  About this event
-                </h2>
-                <div className="text-slate-600 text-sm sm:text-base leading-relaxed space-y-4">
-                  {paragraphs.map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
+                {/* About this Event */}
+                <div className="space-y-3">
+                  <h2 className="text-lg font-bold text-slate-900">
+                    About this event
+                  </h2>
+                  <div className="text-slate-600 text-sm sm:text-base leading-relaxed space-y-4">
+                    {paragraphs.map((paragraph, index) => (
+                      <p key={index}>{paragraph}</p>
+                    ))}
+                  </div>
                 </div>
               </div>
+
+              {/* Sidebar Column */}
+              <div className="space-y-6">
+                <RSVPSection eventId={eventId} />
+
+                <AttendeeList
+                  attendees={attendees}
+                  loading={attendeesLoading}
+                />
+              </div>
             </div>
+          )}
+        </main>
 
-            {/* Sidebar Column */}
-            <div className="space-y-6">
-              <RSVPSection eventId={eventId} />
+        <Footer />
 
-              <AttendeeList
-                attendees={attendees}
-                loading={attendeesLoading}
-              />
+        {/* Delete Confirmation Modal */}
+        {isDeleteModalOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
+            onClick={(e) => {
+              if (e.target === e.currentTarget && !isDeleting) {
+                handleCloseDeleteModal();
+              }
+            }}
+          >
+            <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-md w-full p-6 space-y-5">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-full bg-red-50 text-red-600 shrink-0">
+                  <Trash2 className="w-6 h-6" />
+                </div>
+                <div className="space-y-1 flex-1">
+                  <h3
+                    id="delete-modal-title"
+                    className="text-lg font-bold text-slate-900"
+                  >
+                    Delete Meetup?
+                  </h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Are you sure you want to delete this meetup? This action
+                    cannot be undone.
+                  </p>
+                </div>
+              </div>
+
+              {deleteError && <ErrorMessage message={deleteError} />}
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={handleCloseDeleteModal}
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={handleConfirmDelete}
+                  loading={isDeleting}
+                  disabled={isDeleting}
+                  icon={<Trash2 className="w-4 h-4" />}
+                  iconPosition="left"
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
           </div>
         )}
-      </main>
-
-      <Footer />
-    </div>
+      </div>
     </ProtectedRoute>
   );
 }
