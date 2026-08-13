@@ -7,11 +7,12 @@ async function createEvent(req, res) {
             title,
             description,
             location,
-            eventDate
+            eventDate,
+            eventEndDate
         } = req.body;
 
         // Return 400 when required fields are missing
-        if (!title || !location || !eventDate) {
+        if (!title || !location || !eventDate || !eventEndDate) {
             return res.status(400).json({
                 success: false,
                 message: "Title, location and event date are required"
@@ -24,6 +25,7 @@ async function createEvent(req, res) {
             description,
             location,
             eventDate,
+            eventEndDate,
             userId: req.user.userId
         });
 
@@ -105,11 +107,12 @@ async function updateEvent(req, res) {
             title,
             description,
             location,
-            eventDate
+            eventDate,
+            eventEndDate
         } = req.body;
 
         // Return 400 when required fields are missing
-        if (!title || !location || !eventDate) {
+        if (!title || !location || !eventDate || !eventEndDate) {
             return res.status(400).json({
                 success: false,
                 message: "Title, location and event date are required"
@@ -123,7 +126,8 @@ async function updateEvent(req, res) {
                 title,
                 description,
                 location,
-                eventDate
+                eventDate,
+                eventEndDate
             }
         );
 

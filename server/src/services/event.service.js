@@ -6,6 +6,7 @@ async function createEvent({
     description,
     location,
     eventDate,
+    eventEndDate,
     userId
 }) {
     const eventId = await eventRepository.createEvent({
@@ -13,6 +14,7 @@ async function createEvent({
         description,
         location,
         eventDate,
+        eventEndDate,
         createdBy: userId
     });
 
@@ -33,7 +35,7 @@ async function getEventById(eventId) {
 async function updateEvent(
     eventId,
     userId,
-    { title, description, location, eventDate }
+    { title, description, location, eventDate, eventEndDate }
 ) {
     const event = await eventRepository.findEventById(eventId);
 
@@ -55,7 +57,8 @@ async function updateEvent(
         title,
         description,
         location,
-        eventDate
+        eventDate,
+        eventEndDate
     });
 
     return await eventRepository.findEventById(eventId);
