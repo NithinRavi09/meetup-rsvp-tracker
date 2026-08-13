@@ -9,7 +9,7 @@ export default function EventSearchFilter({
   onSortChange,
 }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+    <div className="rounded-xl p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
       {/* Search Input */}
       <div className="relative flex-1">
         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -21,7 +21,7 @@ export default function EventSearchFilter({
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search events by title or location..."
-          className="w-full pl-10 pr-10 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
+          className="w-full pl-10 pr-10 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
         />
 
         {searchTerm && (
@@ -49,7 +49,7 @@ export default function EventSearchFilter({
           id="sort-select"
           value={sortOption}
           onChange={(e) => onSortChange(e.target.value)}
-          className="bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:bg-white block px-3 py-2 cursor-pointer font-medium outline-none transition-colors"
+          className="bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:bg-white block px-3 py-2 cursor-pointer font-medium outline-none transition-colors"
         >
           <option value="soonest">Soonest first</option>
           <option value="latest">Latest first</option>
