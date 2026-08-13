@@ -157,8 +157,9 @@ export default function EventDetailsPage() {
 
   const currentUserRsvp = attendees.find(
     (attendee) =>
-      Number(attendee.user_id) === Number(user?.id) ||
-      Number(attendee.id) === Number(user?.id)
+      attendee?.user_id != null &&
+      user?.id != null &&
+      Number(attendee.user_id) === Number(user.id)
   );
 
   const handleRsvpUpdated = (newStatus) => {
@@ -168,8 +169,9 @@ export default function EventDetailsPage() {
       const list = Array.isArray(previousAttendees) ? previousAttendees : [];
       const existingIndex = list.findIndex(
         (attendee) =>
-          Number(attendee.user_id) === Number(user.id) ||
-          Number(attendee.id) === Number(user.id)
+          attendee?.user_id != null &&
+          user?.id != null &&
+          Number(attendee.user_id) === Number(user.id)
       );
 
       if (existingIndex !== -1) {
