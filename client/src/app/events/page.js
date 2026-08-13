@@ -10,6 +10,7 @@ import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 import EventList from "../../components/events/EventList";
 import ErrorMessage from "../../components/ui/ErrorMessage";
+import Pagination from "../../components/ui/Pagination";
 
 export default function EventsPage() {
   const router = useRouter();
@@ -54,6 +55,17 @@ export default function EventsPage() {
 
     fetchEvents();
   }, []);
+
+  const eventsPerPage = 9;
+
+  const totalPages = Math.ceil(events.length / eventsPerPage);
+
+  const startIndex = (activePage - 1) * eventsPerPage;
+
+  const currentEvents = events.slice(
+    startIndex,
+    startIndex + eventsPerPage
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
@@ -101,41 +113,15 @@ export default function EventsPage() {
             ))}
           </div>
         ) : (
-          <EventList events={events} />
+          <EventList events={currentEvents} />
         )}
 
         {/* Pagination Section */}
-        {!loading && events.length > 0 && (
-          <div className="flex items-center justify-center space-x-2 pt-6">
-            <button
-              onClick={() => setActivePage((prev) => Math.max(prev - 1, 1))}
-              aria-label="Previous Page"
-              className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 text-sm font-medium transition-colors cursor-pointer"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            {[1, 2, 3].map((page) => (
-              <button
-                key={page}
-                onClick={() => setActivePage(page)}
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors cursor-pointer ${
-                  activePage === page
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              onClick={() => setActivePage((prev) => Math.min(prev + 1, 3))}
-              aria-label="Next Page"
-              className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 text-sm font-medium transition-colors cursor-pointer"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+        <Pagination
+          currentPage={activePage}
+          totalPages={totalPages}
+          onPageChange={setActivePage}
+        />
       </main>
 
       <Footer />
