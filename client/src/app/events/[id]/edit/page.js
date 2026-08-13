@@ -29,6 +29,7 @@ export default function EditEventPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [eventNotFound, setEventNotFound] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -49,6 +50,8 @@ export default function EditEventPage() {
               event.event_end_date || event.eventEndDate
             ),
           });
+        } else {
+          setEventNotFound(true);
         }
       } catch (error) {
         console.error("Failed to fetch event:", error);
@@ -56,6 +59,7 @@ export default function EditEventPage() {
           error.response?.data?.message ||
             "Event not found or failed to load event details."
         );
+        setEventNotFound(true);
       } finally {
         setLoading(false);
       }
@@ -149,7 +153,7 @@ export default function EditEventPage() {
                   <div className="h-28 bg-slate-100 rounded w-full"></div>
                   <div className="h-10 bg-slate-100 rounded w-full"></div>
                 </div>
-              ) : !formData.title ? (
+              ) : eventNotFound ? (
                 <div className="py-8 text-center space-y-4">
                   <div className="p-3 rounded-full bg-slate-100 text-slate-400 w-12 h-12 mx-auto flex items-center justify-center">
                     <CalendarX className="w-6 h-6 text-slate-400" />
