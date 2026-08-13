@@ -11,6 +11,7 @@ import ProtectedRoute from "../../../../components/auth/ProtectedRoute";
 import Input from "../../../../components/ui/Input";
 import Button from "../../../../components/ui/Button";
 import ErrorMessage from "../../../../components/ui/ErrorMessage";
+import { formatDateTimeInput } from "../../../../lib/date";
 
 export default function EditEventPage() {
   const params = useParams();
@@ -43,8 +44,8 @@ export default function EditEventPage() {
             title: event.title || "",
             description: event.description || "",
             location: event.location || "",
-            eventDate: formatDateTime(event.event_date || event.eventDate),
-            eventEndDate: formatDateTime(
+            eventDate: formatDateTimeInput(event.event_date || event.eventDate),
+            eventEndDate: formatDateTimeInput(
               event.event_end_date || event.eventEndDate
             ),
           });
@@ -277,25 +278,4 @@ export default function EditEventPage() {
       </div>
     </ProtectedRoute>
   );
-}
-
-function formatDateTime(value) {
-  if (!value) {
-    return "";
-  }
-
-  try {
-    const date = new Date(value);
-    if (isNaN(date.getTime())) return value;
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  } catch {
-    return value;
-  }
 }

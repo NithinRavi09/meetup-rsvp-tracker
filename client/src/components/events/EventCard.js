@@ -3,65 +3,11 @@
 import Link from "next/link";
 import { Calendar, MapPin, User } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
+import { formatEventCardDate } from "../../lib/date";
 
 export default function EventCard({ event }) {
   const { isLoggedIn } = useAuth();
   const targetHref = isLoggedIn ? `/events/${event.id}` : "/login";
-
-  // Helper to format date cleanly
-  const formatDate = (dateString, endDateString) => {
-    if (!dateString) return "Date not available";
-    
-    try {
-      const startDate = new Date(dateString);
-    
-      if (isNaN(startDate.getTime())) {
-        return dateString;
-      }
-    
-      const endDate = endDateString
-        ? new Date(endDateString)
-        : null;
-    
-      const formattedStartDate = startDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
-    
-      const formattedStartTime = startDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      });
-    
-      if (endDate && !isNaN(endDate.getTime())) {
-        const formattedEndDate = endDate.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        });
-      
-        const formattedEndTime = endDate.toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "2-digit",
-          hour12: true,
-        });
-      
-        // Same day
-        if (formattedStartDate === formattedEndDate) {
-          return `${formattedStartDate} • ${formattedStartTime} - ${formattedEndTime}`;
-        }
-      
-        // Different days
-        return `${formattedStartDate} ${formattedStartTime} - ${formattedEndDate} ${formattedEndTime}`;
-      }
-    
-      return `${formattedStartDate} • ${formattedStartTime}`;
-    } catch {
-      return dateString;
-    }
-  };
 
   const organizerName =
     event.organizer_name ||
@@ -85,7 +31,7 @@ export default function EventCard({ event }) {
           <div className="flex items-center gap-2 min-w-0">
             <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
             <span className="truncate">
-              {formatDate(
+              {formatEventCardDate(
                 event.event_date || event.eventDate,
                 event.event_end_date || event.eventEndDate
               )}

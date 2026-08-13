@@ -14,6 +14,7 @@ import RSVPSection from "../../../components/events/RSVPSection";
 import ErrorMessage from "../../../components/ui/ErrorMessage";
 import Button from "../../../components/ui/Button";
 import useAuth from "../../../hooks/useAuth";
+import { formatEventDetailsDate } from "../../../lib/date";
 
 export default function EventDetailsPage() {
   const params = useParams();
@@ -136,37 +137,11 @@ export default function EventDetailsPage() {
     .split("\n\n")
     .filter(Boolean);
 
-  const startDate = currentEvent?.event_date || currentEvent?.eventDate
-    ? new Date(currentEvent.event_date || currentEvent.eventDate)
-    : null;
-  const endDate = currentEvent?.event_end_date || currentEvent?.eventEndDate
-    ? new Date(currentEvent.event_end_date || currentEvent.eventEndDate)
-    : null;
-
-  const isValidStartDate = startDate && !isNaN(startDate.getTime());
-  const isValidEndDate = endDate && !isNaN(endDate.getTime());
-
-  const formattedDate = isValidStartDate
-    ? startDate.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "Date unavailable";
-
-  const formattedStartTime = isValidStartDate
-    ? startDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-      })
-    : "";
-
-  const formattedEndTime = isValidEndDate
-    ? endDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-      })
-    : "";
+  const { formattedDate, formattedStartTime, formattedEndTime } =
+    formatEventDetailsDate(
+      currentEvent?.event_date || currentEvent?.eventDate,
+      currentEvent?.event_end_date || currentEvent?.eventEndDate
+    );
 
   const { user } = useAuth();
 
