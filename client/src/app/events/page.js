@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus } from "lucide-react";
 import api from "../../lib/api";
 import useAuth from "../../hooks/useAuth";
+import { parseLocalDate } from "../../lib/date";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 import EventList from "../../components/events/EventList";
+import EventSearchFilter from "../../components/events/EventSearchFilter";
 import ErrorMessage from "../../components/ui/ErrorMessage";
 import Pagination from "../../components/ui/Pagination";
 
@@ -19,12 +21,24 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activePage, setActivePage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("soonest");
 
   const handleCreateClick = (e) => {
     if (!isLoggedIn) {
       e.preventDefault();
       router.push("/login");
     }
+  };
+
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+    setActivePage(1);
+  };
+
+  const handleSortChange = (option) => {
+    setSortOption(option);
+    setActivePage(1);
   };
 
   useEffect(() => {
@@ -56,13 +70,65 @@ export default function EventsPage() {
     fetchEvents();
   }, []);
 
-  const eventsPerPage = 9;
+  const query = searchTerm.trim().toLowerCase();
 
-  const totalPages = Math.ceil(events.length / eventsPerPage);
+  const getMatchRank = (event, queryStr) => {
+    if (!queryStr) return 0;
+    const title = (event.title || "").toLowerCase();
+    const location = (event.location || "").toLowerCase();
+
+    if (title.startsWith(queryStr)) return 1;
+    if (title.includes(queryStr)) return 2;
+    if (location.includes(queryStr)) return 3;
+    return 4;
+  };
+
+  const getDateTimestamp = (event) => {
+    const dateVal = event?.event_date || event?.eventDate;
+    if (!dateVal) return 0;
+    const parsed = parseLocalDate(dateVal);
+    return parsed ? parsed.getTime() : 0;
+  };
+
+  // 1. Filter events matching query in title or location
+  const filteredEvents = events.filter((event) => {
+    if (!query) return true;
+    const title = (event.title || "").toLowerCase();
+    const location = (event.location || "").toLowerCase();
+    return title.includes(query) || location.includes(query);
+  });
+
+  // 2. Sort filtered events (prioritizing title starts-with when query is present, then date)
+  const sortedEvents = [...filteredEvents].sort((a, b) => {
+    if (query) {
+      const rankA = getMatchRank(a, query);
+      const rankB = getMatchRank(b, query);
+      if (rankA !== rankB) {
+        return rankA - rankB;
+      }
+    }
+
+    const timeA = getDateTimestamp(a);
+    const timeB = getDateTimestamp(b);
+
+    if (sortOption === "latest") {
+      return timeB - timeA;
+    }
+    return timeA - timeB;
+  });
+
+  // 3. Dynamic pagination calculation
+  const eventsPerPage = 9;
+  const totalPages = Math.ceil(sortedEvents.length / eventsPerPage);
+
+  useEffect(() => {
+    if (activePage > totalPages && totalPages > 0) {
+      setActivePage(1);
+    }
+  }, [totalPages, activePage]);
 
   const startIndex = (activePage - 1) * eventsPerPage;
-
-  const currentEvents = events.slice(
+  const currentEvents = sortedEvents.slice(
     startIndex,
     startIndex + eventsPerPage
   );
@@ -93,6 +159,14 @@ export default function EventsPage() {
           </Link>
         </div>
 
+        {/* Search & Sort Bar */}
+        <EventSearchFilter
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          sortOption={sortOption}
+          onSortChange={handleSortChange}
+        />
+
         {error && <ErrorMessage message={error} />}
 
         {/* Content Section */}
@@ -113,7 +187,11 @@ export default function EventsPage() {
             ))}
           </div>
         ) : (
-          <EventList events={currentEvents} />
+          <EventList
+            events={currentEvents}
+            searchTerm={searchTerm}
+            onClearSearch={() => handleSearchChange("")}
+          />
         )}
 
         {/* Pagination Section */}

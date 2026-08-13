@@ -1,14 +1,50 @@
 "use client";
 
 import Link from "next/link";
-import { CalendarX, Plus } from "lucide-react";
+import { CalendarX, SearchX, Plus } from "lucide-react";
 import EventCard from "./EventCard";
 import useAuth from "../../hooks/useAuth";
 
-export default function EventList({ events = [] }) {
+export default function EventList({
+  events = [],
+  searchTerm = "",
+  onClearSearch,
+}) {
   const { isLoggedIn } = useAuth();
 
   if (!events || events.length === 0) {
+    const isSearching = Boolean(searchTerm.trim());
+
+    if (isSearching) {
+      return (
+        <div className="bg-white border border-slate-200 rounded-xl p-8 sm:p-12 text-center max-w-md mx-auto my-8 sm:my-12 shadow-2xs space-y-4">
+          <div className="p-3 rounded-full bg-slate-100 text-slate-400 w-12 h-12 mx-auto flex items-center justify-center">
+            <SearchX className="w-6 h-6 text-slate-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900 mb-1">
+              No events found
+            </h3>
+            <p className="text-slate-500 text-sm">
+              No events match your search. Try a different search term.
+            </p>
+          </div>
+
+          {onClearSearch && (
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={onClearSearch}
+                className="inline-flex items-center justify-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm rounded-lg transition-colors cursor-pointer"
+              >
+                Clear Search
+              </button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-8 sm:p-12 text-center max-w-md mx-auto my-8 sm:my-12 shadow-2xs space-y-4">
         <div className="p-3 rounded-full bg-slate-100 text-slate-400 w-12 h-12 mx-auto flex items-center justify-center">

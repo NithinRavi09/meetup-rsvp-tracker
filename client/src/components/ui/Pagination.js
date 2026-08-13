@@ -7,14 +7,25 @@ export default function Pagination({
   totalPages,
   onPageChange,
 }) {
-  if (totalPages <= 1) return null;
+  if (totalPages <= 0) return null;
 
-  // Show maximum 3 page numbers
-  let startPage = Math.max(1, currentPage - 1);
-  let endPage = Math.min(totalPages, startPage + 2);
+  let startPage = 1;
+  let endPage = 1;
 
-  if (endPage - startPage < 2) {
-    startPage = Math.max(1, endPage - 2);
+  if (totalPages <= 3) {
+    startPage = 1;
+    endPage = totalPages;
+  } else {
+    if (currentPage <= 2) {
+      startPage = 1;
+      endPage = 3;
+    } else if (currentPage >= totalPages - 1) {
+      startPage = totalPages - 2;
+      endPage = totalPages;
+    } else {
+      startPage = currentPage - 1;
+      endPage = currentPage + 1;
+    }
   }
 
   const pages = [];
@@ -26,8 +37,9 @@ export default function Pagination({
   return (
     <div className="flex items-center justify-center gap-2 pt-6">
       <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+        type="button"
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        disabled={currentPage <= 1}
         className="w-8 h-8 flex items-center justify-center disabled:opacity-40"
       >
         <ChevronLeft className="w-4 h-4 cursor-pointer" />
@@ -36,6 +48,7 @@ export default function Pagination({
       {pages.map((page) => (
         <button
           key={page}
+          type="button"
           onClick={() => onPageChange(page)}
           className={`w-8 h-8 rounded-full text-sm font-semibold cursor-pointer ${
             currentPage === page
@@ -48,8 +61,9 @@ export default function Pagination({
       ))}
 
       <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        type="button"
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage >= totalPages}
         className="w-8 h-8 flex items-center justify-center disabled:opacity-40"
       >
         <ChevronRight className="w-4 h-4 cursor-pointer" />
