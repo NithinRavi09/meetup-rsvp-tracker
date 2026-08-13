@@ -5,6 +5,10 @@ import { CalendarX, SearchX, Plus } from "lucide-react";
 import EventCard from "./EventCard";
 import useAuth from "../../hooks/useAuth";
 
+/**
+ * Grid layout component displaying a responsive list of EventCard items.
+ * Handles dual empty states: search empty state vs zero total events empty state.
+ */
 export default function EventList({
   events = [],
   searchTerm = "",
@@ -15,6 +19,7 @@ export default function EventList({
   if (!events || events.length === 0) {
     const isSearching = Boolean(searchTerm.trim());
 
+    // Render search-specific empty state when search filters produce 0 matches
     if (isSearching) {
       return (
         <div className="bg-white border border-slate-200 rounded-xl p-8 sm:p-12 text-center max-w-md mx-auto my-8 sm:my-12 shadow-2xs space-y-4">
@@ -45,6 +50,7 @@ export default function EventList({
       );
     }
 
+    // Render default empty state when no events exist in the database
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-8 sm:p-12 text-center max-w-md mx-auto my-8 sm:my-12 shadow-2xs space-y-4">
         <div className="p-3 rounded-full bg-slate-100 text-slate-400 w-12 h-12 mx-auto flex items-center justify-center">

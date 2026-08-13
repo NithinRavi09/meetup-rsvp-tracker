@@ -5,6 +5,10 @@ import { Calendar, MapPin, User } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 import { formatEventCardDate } from "../../lib/date";
 
+/**
+ * Event card component rendering event summary information (title, description, date, location, organizer).
+ * Directs logged-in users to event details `/events/${event.id}` and unauthenticated users to `/login`.
+ */
 export default function EventCard({ event }) {
   const { isLoggedIn } = useAuth();
   const targetHref = isLoggedIn ? `/events/${event.id}` : "/login";

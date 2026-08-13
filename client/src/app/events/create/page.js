@@ -11,6 +11,9 @@ import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
 import ErrorMessage from "../../../components/ui/ErrorMessage";
 
+/**
+ * Protected page component allowing authenticated users to create a new community meetup.
+ */
 export default function CreateEventPage() {
   const router = useRouter();
 
@@ -34,6 +37,9 @@ export default function CreateEventPage() {
     }));
   };
 
+  /**
+   * Validates input fields and posts new meetup payload to POST /api/events.
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 

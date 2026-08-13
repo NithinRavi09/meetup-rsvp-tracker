@@ -10,6 +10,9 @@ import Button from "../../components/ui/Button";
 import ErrorMessage from "../../components/ui/ErrorMessage";
 import Loading from "../../components/ui/Loading";
 
+/**
+ * Authentication Login Page component allowing users to sign in with email and password.
+ */
 export default function LoginPage() {
   const router = useRouter();
   const { isLoggedIn, loading: authLoading, login } = useAuth();
@@ -22,6 +25,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Automatically redirects already authenticated users away from login page to /events
   useEffect(() => {
     if (!authLoading && isLoggedIn) {
       router.replace("/events");
@@ -41,6 +45,9 @@ export default function LoginPage() {
     }));
   };
 
+  /**
+   * Submits user credentials to POST /api/auth/login and saves JWT token to auth state.
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 

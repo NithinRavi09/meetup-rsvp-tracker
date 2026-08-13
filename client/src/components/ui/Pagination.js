@@ -2,16 +2,21 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+/**
+ * Dynamic pagination component displaying a maximum 3-page sliding window with bounds-safe controls.
+ */
 export default function Pagination({
   currentPage,
   totalPages,
   onPageChange,
 }) {
+  // Hide pagination controls if there are zero matching pages
   if (totalPages <= 0) return null;
 
   let startPage = 1;
   let endPage = 1;
 
+  // Calculates a maximum 3-page visible window centered dynamically around the active page
   if (totalPages <= 3) {
     startPage = 1;
     endPage = totalPages;

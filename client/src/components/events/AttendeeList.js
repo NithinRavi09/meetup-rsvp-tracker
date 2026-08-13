@@ -2,9 +2,15 @@
 
 import { Users } from "lucide-react";
 
+/**
+ * Component rendering the list of meetup attendees with status badges and initials avatars.
+ */
 export default function AttendeeList({ attendees = [], loading = false }) {
   const displayList = Array.isArray(attendees) ? attendees : [];
 
+  /**
+   * Generates uppercase 1-2 letter initials from a display name.
+   */
   const getInitials = (name) => {
     if (!name) return "U";
     const parts = name.trim().split(" ");
@@ -14,6 +20,9 @@ export default function AttendeeList({ attendees = [], loading = false }) {
     return name.slice(0, 2).toUpperCase();
   };
 
+  /**
+   * Returns styled status badge pills for GOING, MAYBE, or DECLINED status.
+   */
   const getStatusBadge = (status) => {
     const s = (status || "GOING").toUpperCase();
     if (s === "GOING") {
@@ -37,6 +46,9 @@ export default function AttendeeList({ attendees = [], loading = false }) {
     );
   };
 
+  /**
+   * Deterministic avatar background color based on list index.
+   */
   const getAvatarBg = (index) => {
     const colors = [
       "bg-blue-600",

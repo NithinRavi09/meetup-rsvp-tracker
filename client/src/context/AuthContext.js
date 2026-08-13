@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useCallback } from "react";
 import {
   getToken,
   saveToken,
@@ -10,17 +10,22 @@ import {
   removeUser,
 } from "../lib/auth";
 
+/**
+ * Context object providing global authentication state and authentication methods.
+ */
 export const AuthContext = createContext(null);
 
+/**
+ * Provider component managing token state, user profile, token expiry timers, and unauthorized API interceptor events.
+ */
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
 
-  // Important: start with true because we don't know the auth
-  // state until the browser checks localStorage.
+  // Initialized to true to prevent premature redirects before checking localStorage on client mount
   const [loading, setLoading] = useState(true);
 
-  // Read authentication data AFTER the component mounts
+  // Synchronizes authentication state from localStorage after initial client hydration
   useEffect(() => {
     queueMicrotask(() => {
       const storedToken = getToken();
@@ -32,23 +37,29 @@ export const AuthProvider = ({ children }) => {
     });
   }, []);
 
-  const login = (newToken, newUser) => {
+  /**
+   * Persists authentication token and user data to storage and updates state.
+   */
+  const login = useCallback((newToken, newUser) => {
     saveToken(newToken);
     saveUser(newUser);
 
     setToken(newToken);
     setUser(newUser);
-  };
+  }, []);
 
-  const logout = () => {
+  /**
+   * Clears stored token and user profile and resets authentication state.
+   */
+  const logout = useCallback(() => {
     removeToken();
     removeUser();
 
     setToken(null);
     setUser(null);
-  };
+  }, []);
 
-  // Handle unauthorized API responses
+  // Listens for custom 'auth:unauthorized' events dispatched by api.js when a 401 response occurs
   useEffect(() => {
     const handleUnauthorized = () => {
       logout();
@@ -59,9 +70,9 @@ export const AuthProvider = ({ children }) => {
     return () => {
       window.removeEventListener("auth:unauthorized", handleUnauthorized);
     };
-  }, []);
+  }, [logout]);
 
-  // Automatically logout when JWT expires
+  // Schedules an automatic logout timer based on JWT token 'exp' expiration claim
   useEffect(() => {
     if (!token) return;
 
@@ -96,8 +107,7 @@ export const AuthProvider = ({ children }) => {
     } catch {
       queueMicrotask(logout);
     }
-  }, [token]);
-
+  }, [token, logout]);
 
   const isLoggedIn = !!token;
 

@@ -13,6 +13,9 @@ import Button from "../../../../components/ui/Button";
 import ErrorMessage from "../../../../components/ui/ErrorMessage";
 import { formatDateTimeInput } from "../../../../lib/date";
 
+/**
+ * Protected Edit Event Page component allowing event creators to update meetup details.
+ */
 export default function EditEventPage() {
   const params = useParams();
   const router = useRouter();
@@ -31,6 +34,7 @@ export default function EditEventPage() {
   const [error, setError] = useState("");
   const [eventNotFound, setEventNotFound] = useState(false);
 
+  // Prefills existing event details into form on component mount
   useEffect(() => {
     const fetchEvent = async () => {
       try {

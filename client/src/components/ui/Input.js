@@ -1,3 +1,6 @@
+/**
+ * Form input component supporting labels, prefix icons, and error message indicators.
+ */
 export default function Input({
   id,
   name,

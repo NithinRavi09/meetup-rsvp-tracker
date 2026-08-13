@@ -2,6 +2,9 @@
 
 import { Search, X, SlidersHorizontal } from "lucide-react";
 
+/**
+ * Responsive search and sort control bar for filtering meetups by title/location and sorting by date.
+ */
 export default function EventSearchFilter({
   searchTerm = "",
   onSearchChange,

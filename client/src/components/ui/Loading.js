@@ -1,5 +1,8 @@
 import { Loader2 } from "lucide-react";
 
+/**
+ * Full-page loading spinner component used during initial page loads and route protection checks.
+ */
 export default function Loading({ message = "Loading..." }) {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">

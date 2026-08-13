@@ -4,6 +4,9 @@ import { useState } from "react";
 import { Check, HelpCircle, X } from "lucide-react";
 import api from "../../lib/api";
 
+/**
+ * Interactive RSVP control component allowing users to submit or update their RSVP status ('going', 'maybe', 'declined').
+ */
 export default function RSVPSection({ eventId, currentRsvp = "", onRsvpUpdated }) {
   const [status, setStatus] = useState(currentRsvp);
   const [prevRsvp, setPrevRsvp] = useState(currentRsvp);
@@ -11,12 +14,15 @@ export default function RSVPSection({ eventId, currentRsvp = "", onRsvpUpdated }
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  // Syncs local state when parent passes an updated currentRsvp prop
   if (prevRsvp !== currentRsvp) {
     setPrevRsvp(currentRsvp);
     setStatus(currentRsvp || "");
   }
 
-
+  /**
+   * Posts RSVP status selection to backend API and updates local UI and parent callbacks.
+   */
   const handleRSVP = async (selectedStatus) => {
     try {
       setLoading(true);
@@ -42,6 +48,9 @@ export default function RSVPSection({ eventId, currentRsvp = "", onRsvpUpdated }
     }
   };
 
+  /**
+   * Computes dynamic Tailwind CSS class names based on active selection state.
+   */
   const getButtonClass = (buttonStatus) => {
     const isSelected =
       status.toLowerCase() === buttonStatus.toLowerCase();

@@ -1,5 +1,9 @@
 import { Loader2 } from "lucide-react";
 
+/**
+ * Reusable Button component supporting primary, secondary, outline, and danger variants,
+ * loading spinner state, and icon slot positioning.
+ */
 export default function Button({
   children,
   type = "button",

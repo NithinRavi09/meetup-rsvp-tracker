@@ -16,6 +16,10 @@ import Button from "../../../components/ui/Button";
 import useAuth from "../../../hooks/useAuth";
 import { formatEventDetailsDate } from "../../../lib/date";
 
+/**
+ * Protected Event Details Page component.
+ * Displays full event details, attendee list, interactive RSVP controls, and owner-only edit/delete modal.
+ */
 export default function EventDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -32,6 +36,7 @@ export default function EventDetailsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
+  // Fetches event details and attendee RSVPs in parallel on page load
   useEffect(() => {
     const fetchEventAndAttendees = async () => {
       if (!eventId) return;

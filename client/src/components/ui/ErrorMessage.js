@@ -1,5 +1,8 @@
 import { AlertCircle } from "lucide-react";
 
+/**
+ * Reusable error message alert component displaying error text alongside an AlertCircle icon.
+ */
 export default function ErrorMessage({ message }) {
   if (!message) return null;
 

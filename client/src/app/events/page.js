@@ -14,6 +14,10 @@ import EventSearchFilter from "../../components/events/EventSearchFilter";
 import ErrorMessage from "../../components/ui/ErrorMessage";
 import Pagination from "../../components/ui/Pagination";
 
+/**
+ * Main Events Directory Page component.
+ * Handles event fetching, client-side title/location search, date sorting, and dynamic pagination.
+ */
 export default function EventsPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
@@ -24,6 +28,7 @@ export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("soonest");
 
+  // Navigates unauthenticated users to login if they attempt to create a meetup
   const handleCreateClick = (e) => {
     if (!isLoggedIn) {
       e.preventDefault();
@@ -31,16 +36,19 @@ export default function EventsPage() {
     }
   };
 
+  // Updates search term and resets pagination to page 1 to prevent empty out-of-range views
   const handleSearchChange = (term) => {
     setSearchTerm(term);
     setActivePage(1);
   };
 
+  // Updates sorting option ('soonest' or 'latest') and resets pagination to page 1
   const handleSortChange = (option) => {
     setSortOption(option);
     setActivePage(1);
   };
 
+  // Fetches upcoming meetups from backend API on initial page mount
   useEffect(() => {
     const fetchEvents = async () => {
       try {

@@ -6,11 +6,17 @@ import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 
+/**
+ * Top navigation header bar displaying brand logo, navigation links, user profile avatar, and logout action.
+ */
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isLoggedIn, logout } = useAuth();
 
+  /**
+   * Logs out user and redirects to login page.
+   */
   const handleLogout = () => {
     logout();
     router.push("/login");
@@ -59,6 +65,7 @@ export default function Navbar() {
                 </span>
               </div>
               <button
+                type="button"
                 onClick={handleLogout}
                 className="text-sm font-medium text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-colors cursor-pointer"
               >
